@@ -22454,5 +22454,53 @@
     "accessibility": 88,
     "seo": 100,
     "best_practices": 77
+  },
+  {
+    "date": "2026-09-28 09:11",
+    "page": "Brand",
+    "performance": 64,
+    "accessibility": 97,
+    "seo": 100,
+    "best_practices": 77
+  },
+  {
+    "date": "2026-09-28 09:11",
+    "page": "Category",
+    "performance": 56,
+    "accessibility": 97,
+    "seo": 100,
+    "best_practices": 81
+  },
+  {
+    "date": "2026-09-28 09:11",
+    "page": "Editorial",
+    "performance": 40,
+    "accessibility": 95,
+    "seo": 92,
+    "best_practices": 81
+  },
+  {
+    "date": "2026-09-28 09:11",
+    "page": "Home",
+    "performance": 35,
+    "accessibility": 96,
+    "seo": 100,
+    "best_practices": 81
+  },
+  {
+    "date": "2026-09-28 09:11",
+    "page": "PDP",
+    "performance": 44,
+    "accessibility": 89,
+    "seo": 100,
+    "best_practices": 81
+  },
+  {
+    "date": "2026-09-28 09:11",
+    "page": "Pharmacy",
+    "performance": 35,
+    "accessibility": 88,
+    "seo": 100,
+    "best_practices": 77
   }
 ]
