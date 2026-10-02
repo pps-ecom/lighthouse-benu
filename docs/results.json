@@ -23534,5 +23534,53 @@
     "accessibility": 88,
     "seo": 100,
     "best_practices": 96
+  },
+  {
+    "date": "2026-10-02 18:15",
+    "page": "Brand",
+    "performance": 78,
+    "accessibility": 97,
+    "seo": 100,
+    "best_practices": 96
+  },
+  {
+    "date": "2026-10-02 18:15",
+    "page": "Category",
+    "performance": 53,
+    "accessibility": 97,
+    "seo": 100,
+    "best_practices": 100
+  },
+  {
+    "date": "2026-10-02 18:15",
+    "page": "Editorial",
+    "performance": 46,
+    "accessibility": 95,
+    "seo": 92,
+    "best_practices": 100
+  },
+  {
+    "date": "2026-10-02 18:15",
+    "page": "Home",
+    "performance": 54,
+    "accessibility": 96,
+    "seo": 100,
+    "best_practices": 96
+  },
+  {
+    "date": "2026-10-02 18:15",
+    "page": "PDP",
+    "performance": 41,
+    "accessibility": 89,
+    "seo": 100,
+    "best_practices": 100
+  },
+  {
+    "date": "2026-10-02 18:15",
+    "page": "Pharmacy",
+    "performance": 33,
+    "accessibility": 88,
+    "seo": 100,
+    "best_practices": 96
   }
 ]
