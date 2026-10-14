@@ -118,6 +118,24 @@
       background: white;
     }
 
+    .chart-url {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+
+.chart-url a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+
+.chart-url a:hover {
+  text-decoration: underline;
+}
+
     .table-wrap {
       background: white;
       border-radius: 8px;
@@ -352,6 +370,15 @@
       "Pharmacy"
     ];
 
+const PAGE_URLS = {
+  Home: "https://www.benu.ch",
+  Editorial: "https://www.benu.ch/e/flohsamen-das-kleine-wundermittel-mit-grosser-wirkung",
+  PDP: "https://www.benu.ch/kijimea-reizdarm-pro-kapsel-84-stuck",
+  Category: "https://www.benu.ch/c/gesundheit/",
+  Brand: "https://www.benu.ch/b/la-roche-posay",
+  Pharmacy: "https://www.benu.ch/p/benu-luzern-bahnhof"
+};
+
     const COLORS = {
       performance: "#4CAF50",
       accessibility: "#2196F3",
@@ -524,12 +551,23 @@
         const card = document.createElement("div");
 
         card.className = "card";
-        card.innerHTML = `
-          <h2>${page}</h2>
-          <div class="chart-container">
-            <canvas id="chart-${pageId}"></canvas>
-          </div>
-        `;
+
+card.innerHTML = `
+  <h2>${page}</h2>
+
+  <div class="chart-container">
+    <canvas id="chart-${pageId}"></canvas>
+  </div>
+
+  <div class="chart-url">
+    Geprüfte URL:
+    <a href="${PAGE_URLS[page]}"
+       target="_blank"
+       rel="noopener noreferrer">
+      ${PAGE_URLS[page]}
+    </a>
+  </div>
+`;
 
         chartsContainer.appendChild(card);
 
