@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Lighthouse Dashboard - benu.ch</title>
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -104,6 +102,12 @@
       display: flex;
       gap: 10px;
       align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .chart-filter label {
+      font-size: 0.9rem;
+      color: #555;
     }
 
     .chart-filter select {
@@ -113,7 +117,6 @@
       font-size: 0.9rem;
       background: white;
     }
-
 
     .table-wrap {
       background: white;
@@ -310,27 +313,25 @@
   <nav class="nav" id="topNav"></nav>
 
   <h2 class="section-title" id="charts-title">
-    📈 Einzelmessungen und Tagesmedian
+    📈 Tagesmedian nach Seitentyp
   </h2>
 
   <p class="summary-note">
-    Durchgezogene Linien zeigen die Einzelmessungen. Dicke, gestrichelte
-    Linien zeigen den Median aller Messungen des jeweiligen Kalendertags.
+    Die Diagramme zeigen pro Kalendertag und Kennzahl den Median aller Messungen.
+    Die Einzelmessungen bleiben in den Tabellen vollständig verfügbar.
   </p>
 
-<div class="chart-filter">
-  <label for="chartRange">
-    Zeitraum:
-  </label>
+  <div class="chart-filter">
+    <label for="chartRange">Zeitraum:</label>
 
-  <select id="chartRange">
-    <option value="7">Letzte 7 Tage</option>
-    <option value="30" selected>Letzte 30 Tage</option>
-    <option value="90">Letzte 90 Tage</option>
-    <option value="180">Letzte 180 Tage</option>
-    <option value="all">Alle Daten</option>
-  </select>
-</div>
+    <select id="chartRange">
+      <option value="7">Letzte 7 Tage</option>
+      <option value="30" selected>Letzte 30 Tage</option>
+      <option value="90">Letzte 90 Tage</option>
+      <option value="180">Letzte 180 Tage</option>
+      <option value="all">Alle Daten</option>
+    </select>
+  </div>
 
   <div class="grid" id="charts-section"></div>
 
@@ -339,7 +340,6 @@
   </h2>
 
   <div class="anchor-links" id="anchorLinks"></div>
-
   <div id="tables"></div>
 
   <script>
@@ -359,15 +359,7 @@
       best_practices: "#9C27B0"
     };
 
-    const MEDIAN_COLORS = {
-      performance: "#145A20",
-      accessibility: "#0D47A1",
-      seo: "#C44500",
-      best_practices: "#4A148C"
-    };
-
     const state = {};
-
     let allData = [];
     let chartInstances = [];
 
@@ -401,9 +393,7 @@
         return null;
       }
 
-      const middleIndex = Math.floor(
-        sortedValues.length / 2
-      );
+      const middleIndex = Math.floor(sortedValues.length / 2);
 
       if (sortedValues.length % 2 === 0) {
         return (
@@ -415,160 +405,90 @@
       return sortedValues[middleIndex];
     }
 
-    function calculateDailyMedian(data, metric) {
+    function getDailyMedians(data) {
       const dailyGroups = new Map();
 
       data.forEach(item => {
-        const day = String(item.date).slice(0, 10);
-        const value = Number(item[metric]);
+        const date = String(item.date).slice(0, 10);
 
-        if (!day || !Number.isFinite(value)) {
+        if (!date) {
           return;
         }
 
-        if (!dailyGroups.has(day)) {
-          dailyGroups.set(day, []);
+        if (!dailyGroups.has(date)) {
+          dailyGroups.set(date, {
+            performance: [],
+            accessibility: [],
+            seo: [],
+            best_practices: [],
+            runs: 0
+          });
         }
 
-        dailyGroups.get(day).push(value);
+        const group = dailyGroups.get(date);
+        group.performance.push(item.performance);
+        group.accessibility.push(item.accessibility);
+        group.seo.push(item.seo);
+        group.best_practices.push(item.best_practices);
+        group.runs += 1;
       });
 
       return Array.from(dailyGroups.entries())
         .map(([date, values]) => ({
           date,
-          value: calculateMedian(values),
-          runs: values.length
+          performance: calculateMedian(values.performance),
+          accessibility: calculateMedian(values.accessibility),
+          seo: calculateMedian(values.seo),
+          best_practices: calculateMedian(values.best_practices),
+          runs: values.runs
         }))
         .sort((a, b) => a.date.localeCompare(b.date));
     }
 
-    function mapDailyMedianToRuns(
-      sortedData,
-      dailyMedianData
-    ) {
-      const medianByDate = Object.fromEntries(
-        dailyMedianData.map(item => [
-          item.date,
-          item.value
-        ])
+    function getFilteredChartData() {
+      const range =
+        document.getElementById("chartRange")?.value || "30";
+
+      if (range === "all") {
+        return allData;
+      }
+
+      const cutoffDate = new Date();
+      cutoffDate.setHours(0, 0, 0, 0);
+      cutoffDate.setDate(
+        cutoffDate.getDate() - (Number(range) - 1)
       );
 
-      const lastIndexByDate = {};
+      return allData.filter(item => {
+        const itemDate = new Date(item.date);
 
-      sortedData.forEach((item, index) => {
-        const day = String(item.date).slice(0, 10);
-        lastIndexByDate[day] = index;
-      });
-
-      return sortedData.map((item, index) => {
-        const day = String(item.date).slice(0, 10);
-
-        if (lastIndexByDate[day] === index) {
-          return medianByDate[day] ?? null;
+        if (Number.isNaN(itemDate.getTime())) {
+          return false;
         }
 
-        return null;
+        return itemDate >= cutoffDate;
       });
     }
 
-    function getRunsForDay(data, date) {
-      const day = String(date).slice(0, 10);
+    function updateCharts() {
+      chartInstances.forEach(chart => chart.destroy());
+      chartInstances = [];
 
-      return data.filter(
-        item =>
-          String(item.date).slice(0, 10) === day
-      ).length;
+      document.getElementById("charts-section").innerHTML = "";
+      buildCharts(getFilteredChartData());
     }
-
-    fetch("results.json")
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(
-            "results.json konnte nicht geladen werden. " +
-            `HTTP-Status: ${response.status}`
-          );
-        }
-
-        return response.json();
-      })
-      .then(data => {
-
-  allData = data;
-
-  if (!Array.isArray(data)) {
-          throw new Error(
-            "results.json enthält kein gültiges JSON-Array."
-          );
-        }
-
-      buildNav(data);
-
-const savedRange =
-  localStorage.getItem("chartRange");
-
-if (savedRange) {
-  document.getElementById(
-    "chartRange"
-  ).value = savedRange;
-}
-
-buildCharts(
-  getFilteredChartData()
-);
-
-document
-  .getElementById("chartRange")
-  .addEventListener("change", () => {
-
-    localStorage.setItem(
-      "chartRange",
-      document.getElementById("chartRange").value
-    );
-
-    updateCharts();
-  });
-
-buildAllTables(data);
-      })
-      .catch(error => {
-        console.error(error);
-
-        const errorBox = document.createElement("div");
-        errorBox.className = "error-box";
-
-        errorBox.innerHTML = `
-          <strong>Fehler beim Laden der Ergebnisse</strong>
-          <p>${error.message}</p>
-        `;
-
-        const chartsTitle =
-          document.getElementById("charts-title");
-
-        chartsTitle.insertAdjacentElement(
-          "afterend",
-          errorBox
-        );
-      });
 
     function buildNav(data) {
-      const topNav =
-        document.getElementById("topNav");
+      const topNav = document.getElementById("topNav");
+      const anchorLinks = document.getElementById("anchorLinks");
 
-      const anchorLinks =
-        document.getElementById("anchorLinks");
-
-      const chartLink =
-        document.createElement("a");
-
+      const chartLink = document.createElement("a");
       chartLink.href = "#charts-title";
       chartLink.textContent = "📈 Tagesmedian";
-
       topNav.appendChild(chartLink);
 
       PAGES.forEach(page => {
-        const pageData = data.filter(
-          item => item.page === page
-        );
+        const pageData = data.filter(item => item.page === page);
 
         if (!pageData.length) {
           return;
@@ -576,139 +496,36 @@ buildAllTables(data);
 
         const id = safeid(page);
 
-        const navigationLink =
-          document.createElement("a");
-
+        const navigationLink = document.createElement("a");
         navigationLink.href = `#table-${id}`;
         navigationLink.textContent = page;
-
         topNav.appendChild(navigationLink);
 
-        const anchorLink =
-          document.createElement("a");
-
+        const anchorLink = document.createElement("a");
         anchorLink.href = `#table-${id}`;
         anchorLink.textContent = page;
-
         anchorLinks.appendChild(anchorLink);
       });
     }
-
-function getFilteredChartData() {
-
-  const range =
-    document.getElementById("chartRange")
-      ?.value || "30";
-
-  if (range === "all") {
-    return allData;
-  }
-
-  const cutoffDate = new Date();
-
-cutoffDate.setHours(
-  0,
-  0,
-  0,
-  0
-);
-
-cutoffDate.setDate(
-  cutoffDate.getDate() - Number(range)
-);
-
-  return allData.filter(item => {
-
-    const itemDate =
-      new Date(item.date);
-
-    return itemDate >= cutoffDate;
-  });
-}
-
-function updateCharts() {
-
-  chartInstances.forEach(chart =>
-    chart.destroy()
-  );
-
-  chartInstances = [];
-
-  document.getElementById(
-    "charts-section"
-  ).innerHTML = "";
-
-  buildCharts(
-    getFilteredChartData()
-  );
-}
 
     function buildCharts(data) {
       const chartsContainer =
         document.getElementById("charts-section");
 
       PAGES.forEach(page => {
-        const pageData = data.filter(
-          item => item.page === page
-        );
+        const pageData = data.filter(item => item.page === page);
 
         if (!pageData.length) {
           return;
         }
 
-        const sortedData = [...pageData].sort(
-          (a, b) =>
-            String(a.date).localeCompare(
-              String(b.date)
-            )
-        );
-
-        const performanceMedian =
-          mapDailyMedianToRuns(
-            sortedData,
-            calculateDailyMedian(
-              sortedData,
-              "performance"
-            )
-          );
-
-        const accessibilityMedian =
-          mapDailyMedianToRuns(
-            sortedData,
-            calculateDailyMedian(
-              sortedData,
-              "accessibility"
-            )
-          );
-
-        const seoMedian =
-          mapDailyMedianToRuns(
-            sortedData,
-            calculateDailyMedian(
-              sortedData,
-              "seo"
-            )
-          );
-
-        const bestPracticesMedian =
-          mapDailyMedianToRuns(
-            sortedData,
-            calculateDailyMedian(
-              sortedData,
-              "best_practices"
-            )
-          );
-
+        const medianData = getDailyMedians(pageData);
         const pageId = safeid(page);
-
-        const card =
-          document.createElement("div");
+        const card = document.createElement("div");
 
         card.className = "card";
-
         card.innerHTML = `
           <h2>${page}</h2>
-
           <div class="chart-container">
             <canvas id="chart-${pageId}"></canvas>
           </div>
@@ -716,74 +533,34 @@ function updateCharts() {
 
         chartsContainer.appendChild(card);
 
-        const canvas =
-          document.getElementById(
-            `chart-${pageId}`
-          );
+        const canvas = document.getElementById(`chart-${pageId}`);
 
         const chart = new Chart(canvas, {
           type: "line",
 
           data: {
-            labels: sortedData.map(
-              item => item.date
-            ),
+            labels: medianData.map(item => item.date),
 
             datasets: [
-              createRunDataset(
-                "Performance",
-                sortedData.map(
-                  item => Number(item.performance)
-                ),
-                COLORS.performance
-              ),
-
               createMedianDataset(
                 "Performance Tagesmedian",
-                performanceMedian,
-                MEDIAN_COLORS.performance
+                medianData.map(item => item.performance),
+                COLORS.performance
               ),
-
-              createRunDataset(
-                "Accessibility",
-                sortedData.map(
-                  item => Number(item.accessibility)
-                ),
-                COLORS.accessibility
-              ),
-
               createMedianDataset(
                 "Accessibility Tagesmedian",
-                accessibilityMedian,
-                MEDIAN_COLORS.accessibility
+                medianData.map(item => item.accessibility),
+                COLORS.accessibility
               ),
-
-              createRunDataset(
-                "SEO",
-                sortedData.map(
-                  item => Number(item.seo)
-                ),
-                COLORS.seo
-              ),
-
               createMedianDataset(
                 "SEO Tagesmedian",
-                seoMedian,
-                MEDIAN_COLORS.seo
+                medianData.map(item => item.seo),
+                COLORS.seo
               ),
-
-              createRunDataset(
-                "Best Practices",
-                sortedData.map(
-                  item => Number(item.best_practices)
-                ),
-                COLORS.best_practices
-              ),
-
               createMedianDataset(
                 "Best Practices Tagesmedian",
-                bestPracticesMedian,
-                MEDIAN_COLORS.best_practices
+                medianData.map(item => item.best_practices),
+                COLORS.best_practices
               )
             ]
           },
@@ -812,27 +589,13 @@ function updateCharts() {
                       return "";
                     }
 
-                    const dataIndex =
-                      tooltipItems[0].dataIndex;
-
-                    const selectedDate =
-                      sortedData[dataIndex].date;
-
-                    const day =
-                      String(selectedDate).slice(
-                        0,
-                        10
-                      );
-
-                    const runs =
-                      getRunsForDay(
-                        sortedData,
-                        selectedDate
-                      );
+                    const selectedDay =
+                      medianData[tooltipItems[0].dataIndex];
 
                     return [
-                      `Datum: ${day}`,
-                      `Messungen an diesem Tag: ${runs}`
+                      `Datum: ${selectedDay.date}`,
+                      `Messungen an diesem Tag: ${selectedDay.runs}`,
+                      "Angezeigte Werte: Tagesmedian"
                     ];
                   }
                 }
@@ -842,10 +605,10 @@ function updateCharts() {
             scales: {
               x: {
                 ticks: {
-                  maxRotation: 50,
-                  minRotation: 45,
                   autoSkip: true,
-                  maxTicksLimit: 10
+                  maxTicksLimit: 10,
+                  maxRotation: 45,
+                  minRotation: 45
                 }
               },
 
@@ -859,73 +622,41 @@ function updateCharts() {
             }
           }
         });
+
         chartInstances.push(chart);
       });
     }
 
-    function createRunDataset(
-      label,
-      values,
-      color
-    ) {
+    function createMedianDataset(label, values, color) {
       return {
         label,
         data: values,
         borderColor: color,
         backgroundColor: color,
-        borderWidth: 1.5,
-        pointRadius: 2,
-        pointHoverRadius: 5,
-        tension: 0.3,
-        fill: false,
-        order: 2
-      };
-    }
-
-    function createMedianDataset(
-      label,
-      values,
-      color
-    ) {
-      return {
-        label,
-        data: values,
-        borderColor: color,
-        backgroundColor: color,
-        borderWidth: 3,
-        borderDash: [8, 5],
-        pointRadius: 4,
-        pointHoverRadius: 7,
+        borderWidth: 2.5,
+        pointRadius: 3,
+        pointHoverRadius: 6,
         pointBackgroundColor: color,
         pointBorderColor: "#ffffff",
         pointBorderWidth: 1,
-        spanGaps: true,
-        tension: 0.2,
-        fill: false,
-        order: 1
+        tension: 0.25,
+        fill: false
       };
     }
 
     function buildAllTables(data) {
-      const container =
-        document.getElementById("tables");
+      const container = document.getElementById("tables");
 
       PAGES.forEach(page => {
-        const pageData = data.filter(
-          item => item.page === page
-        );
+        const pageData = data.filter(item => item.page === page);
 
         if (!pageData.length) {
           return;
         }
 
         const id = safeid(page);
-
         const sorted = [...pageData].sort(
-          (a, b) =>
-            String(b.date).localeCompare(
-              String(a.date)
-            )
+          (a, b) => String(b.date).localeCompare(String(a.date))
         );
 
         state[id] = {
@@ -936,25 +667,16 @@ function updateCharts() {
           all: pageData
         };
 
-        const wrap =
-          document.createElement("div");
-
+        const wrap = document.createElement("div");
         wrap.className = "table-wrap";
         wrap.id = `table-${id}`;
 
         wrap.innerHTML = `
-          <a class="back-top" href="#top">
-            ↑ Nach oben
-          </a>
+          <a class="back-top" href="#top">↑ Nach oben</a>
 
           <h3>
             ${page}
-
-            <span style="
-              font-weight: normal;
-              color: #999;
-              font-size: 0.85rem;
-            ">
+            <span style="font-weight: normal; color: #999; font-size: 0.85rem;">
               (${pageData.length} Einträge gesamt)
             </span>
           </h3>
@@ -981,7 +703,6 @@ function updateCharts() {
 
             <label>
               Zeilen:
-
               <select id="size-${id}">
                 <option value="25" selected>25</option>
                 <option value="50">50</option>
@@ -994,25 +715,11 @@ function updateCharts() {
           <table>
             <thead>
               <tr>
-                <th data-page="${id}" data-col="date">
-                  Datum
-                </th>
-
-                <th data-page="${id}" data-col="performance">
-                  Performance
-                </th>
-
-                <th data-page="${id}" data-col="accessibility">
-                  Accessibility
-                </th>
-
-                <th data-page="${id}" data-col="seo">
-                  SEO
-                </th>
-
-                <th data-page="${id}" data-col="best_practices">
-                  Best Practices
-                </th>
+                <th data-page="${id}" data-col="date">Datum</th>
+                <th data-page="${id}" data-col="performance">Performance</th>
+                <th data-page="${id}" data-col="accessibility">Accessibility</th>
+                <th data-page="${id}" data-col="seo">SEO</th>
+                <th data-page="${id}" data-col="best_practices">Best Practices</th>
               </tr>
             </thead>
 
@@ -1020,99 +727,68 @@ function updateCharts() {
           </table>
 
           <div class="row-count" id="count-${id}"></div>
-
           <div class="pagination" id="pag-${id}"></div>
         `;
 
         container.appendChild(wrap);
 
-        ["from", "to", "search", "size"].forEach(
-          key => {
-            document
-              .getElementById(`${key}-${id}`)
-              .addEventListener(
-                "input",
-                () => applyFilter(id)
-              );
-          }
-        );
+        ["from", "to", "search", "size"].forEach(key => {
+          document
+            .getElementById(`${key}-${id}`)
+            .addEventListener("input", () => applyFilter(id));
+        });
 
-        wrap
-          .querySelectorAll("th[data-col]")
-          .forEach(tableHeader => {
-            tableHeader.addEventListener(
-              "click",
-              () => {
-                const currentState =
-                  state[id];
+        wrap.querySelectorAll("th[data-col]").forEach(tableHeader => {
+          tableHeader.addEventListener("click", () => {
+            const currentState = state[id];
 
-                if (
-                  currentState.sortCol ===
-                  tableHeader.dataset.col
-                ) {
-                  currentState.sortDir *= -1;
-                } else {
-                  currentState.sortCol =
-                    tableHeader.dataset.col;
+            if (currentState.sortCol === tableHeader.dataset.col) {
+              currentState.sortDir *= -1;
+            } else {
+              currentState.sortCol = tableHeader.dataset.col;
+              currentState.sortDir = -1;
+            }
 
-                  currentState.sortDir = -1;
-                }
-
-                sortAndRender(id);
-              }
-            );
+            sortAndRender(id);
           });
+        });
 
         renderTable(id);
       });
     }
 
     function applyFilter(id) {
-      const from =
-        document.getElementById(
-          `from-${id}`
-        ).value;
-
-      const to =
-        document.getElementById(
-          `to-${id}`
-        ).value;
-
-      const search =
-        document
-          .getElementById(`search-${id}`)
-          .value
-          .toLowerCase();
+      const from = document.getElementById(`from-${id}`).value;
+      const to = document.getElementById(`to-${id}`).value;
+      const search = document
+        .getElementById(`search-${id}`)
+        .value
+        .toLowerCase();
 
       const currentState = state[id];
 
-      currentState.filtered =
-        currentState.all.filter(item => {
-          const dateString =
-            String(item.date).slice(0, 10);
+      currentState.filtered = currentState.all.filter(item => {
+        const dateString = String(item.date).slice(0, 10);
 
-          if (from && dateString < from) {
-            return false;
-          }
+        if (from && dateString < from) {
+          return false;
+        }
 
-          if (to && dateString > to) {
-            return false;
-          }
+        if (to && dateString > to) {
+          return false;
+        }
 
-          if (
-            search &&
-            !String(item.date)
-              .toLowerCase()
-              .includes(search)
-          ) {
-            return false;
-          }
+        if (
+          search &&
+          !String(item.date).toLowerCase().includes(search)
+        ) {
+          return false;
+        }
 
-          return true;
-        });
+        return true;
+      });
 
       currentState.currentPage = 1;
-
       sortAndRender(id);
     }
 
@@ -1120,28 +796,21 @@ function updateCharts() {
       const currentState = state[id];
 
       currentState.filtered.sort((a, b) => {
-        const firstValue =
-          a[currentState.sortCol];
-
-        const secondValue =
-          b[currentState.sortCol];
+        const firstValue = a[currentState.sortCol];
+        const secondValue = b[currentState.sortCol];
 
         if (
           typeof firstValue === "number" &&
           typeof secondValue === "number"
         ) {
-          return (
-            currentState.sortDir *
-            (firstValue - secondValue)
-          );
+          return currentState.sortDir * (firstValue - secondValue);
         }
 
         return (
           currentState.sortDir *
-          String(firstValue ?? "")
-            .localeCompare(
-              String(secondValue ?? "")
-            )
+          String(firstValue ?? "").localeCompare(
+            String(secondValue ?? "")
+          )
         );
       });
 
@@ -1150,19 +819,13 @@ function updateCharts() {
 
     function renderTable(id) {
       const currentState = state[id];
-
       const pageSize = parseInt(
-        document.getElementById(
-          `size-${id}`
-        ).value,
+        document.getElementById(`size-${id}`).value,
         10
       );
 
-      const total =
-        currentState.filtered.length;
-
-      const totalPages =
-        Math.ceil(total / pageSize) || 1;
+      const total = currentState.filtered.length;
+      const totalPages = Math.ceil(total / pageSize) || 1;
 
       currentState.currentPage = Math.min(
         currentState.currentPage,
@@ -1170,47 +833,36 @@ function updateCharts() {
       );
 
       const startIndex =
-        (currentState.currentPage - 1) *
-        pageSize;
+        (currentState.currentPage - 1) * pageSize;
 
-      const currentRows =
-        currentState.filtered.slice(
-          startIndex,
-          startIndex + pageSize
-        );
+      const currentRows = currentState.filtered.slice(
+        startIndex,
+        startIndex + pageSize
+      );
 
-      const tableBody =
-        document.getElementById(
-          `tbody-${id}`
-        );
-
+      const tableBody = document.getElementById(`tbody-${id}`);
       tableBody.innerHTML = "";
 
       currentRows.forEach(item => {
-        const row =
-          document.createElement("tr");
+        const row = document.createElement("tr");
 
         row.innerHTML = `
           <td>${item.date}</td>
-
           <td>
             <span class="score ${scoreClass(Number(item.performance))}">
               ${item.performance}
             </span>
           </td>
-
           <td>
             <span class="score ${scoreClass(Number(item.accessibility))}">
               ${item.accessibility}
             </span>
           </td>
-
           <td>
             <span class="score ${scoreClass(Number(item.seo))}">
               ${item.seo}
             </span>
           </td>
-
           <td>
             <span class="score ${scoreClass(Number(item.best_practices))}">
               ${item.best_practices}
@@ -1221,17 +873,10 @@ function updateCharts() {
         tableBody.appendChild(row);
       });
 
-      document.getElementById(
-        `count-${id}`
-      ).textContent =
-        `${total} Einträge · Seite ` +
-        `${currentState.currentPage} von ${totalPages}`;
+      document.getElementById(`count-${id}`).textContent =
+        `${total} Einträge · Seite ${currentState.currentPage} von ${totalPages}`;
 
-      const pagination =
-        document.getElementById(
-          `pag-${id}`
-        );
-
+      const pagination = document.getElementById(`pag-${id}`);
       pagination.innerHTML = "";
 
       for (
@@ -1239,45 +884,27 @@ function updateCharts() {
         pageNumber <= totalPages;
         pageNumber++
       ) {
-        const button =
-          document.createElement("button");
-
+        const button = document.createElement("button");
         button.textContent = pageNumber;
 
-        if (
-          pageNumber ===
-          currentState.currentPage
-        ) {
+        if (pageNumber === currentState.currentPage) {
           button.classList.add("active");
         }
 
-        button.addEventListener(
-          "click",
-          () => {
-            currentState.currentPage =
-              pageNumber;
-
-            renderTable(id);
-          }
-        );
+        button.addEventListener("click", () => {
+          currentState.currentPage = pageNumber;
+          renderTable(id);
+        });
 
         pagination.appendChild(button);
       }
 
       document
-        .querySelectorAll(
-          `th[data-page="${id}"]`
-        )
+        .querySelectorAll(`th[data-page="${id}"]`)
         .forEach(tableHeader => {
-          tableHeader.classList.remove(
-            "sorted-asc",
-            "sorted-desc"
-          );
+          tableHeader.classList.remove("sorted-asc", "sorted-desc");
 
-          if (
-            tableHeader.dataset.col ===
-            currentState.sortCol
-          ) {
+          if (tableHeader.dataset.col === currentState.sortCol) {
             tableHeader.classList.add(
               currentState.sortDir === 1
                 ? "sorted-asc"
@@ -1286,6 +913,59 @@ function updateCharts() {
           }
         });
     }
+
+    fetch("results.json")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(
+            "results.json konnte nicht geladen werden. " +
+            `HTTP-Status: ${response.status}`
+          );
+        }
+
+        return response.json();
+      })
+      .then(data => {
+        if (!Array.isArray(data)) {
+          throw new Error(
+            "results.json enthält kein gültiges JSON-Array."
+          );
+        }
+
+        allData = data;
+        buildNav(data);
+
+        const savedRange = localStorage.getItem("chartRange");
+        const allowedRanges = ["7", "30", "90", "180", "all"];
+
+        if (savedRange && allowedRanges.includes(savedRange)) {
+          document.getElementById("chartRange").value = savedRange;
+        }
+
+        buildCharts(getFilteredChartData());
+
+        document
+          .getElementById("chartRange")
+          .addEventListener("change", event => {
+            localStorage.setItem("chartRange", event.target.value);
+            updateCharts();
+          });
+
+        buildAllTables(data);
+      })
+      .catch(error => {
+        console.error(error);
+
+        const errorBox = document.createElement("div");
+        errorBox.className = "error-box";
+        errorBox.innerHTML = `
+          <strong>Fehler beim Laden der Ergebnisse</strong>
+          <p>${error.message}</p>
+        `;
+
+        const chartsTitle = document.getElementById("charts-title");
+        chartsTitle.insertAdjacentElement("afterend", errorBox);
+      });
   </script>
 </body>
 </html>
