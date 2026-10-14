@@ -99,6 +99,22 @@
       min-height: 360px;
     }
 
+    .chart-filter {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .chart-filter select {
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background: white;
+    }
+
+
     .table-wrap {
       background: white;
       border-radius: 8px;
@@ -302,6 +318,20 @@
     Linien zeigen den Median aller Messungen des jeweiligen Kalendertags.
   </p>
 
+<div class="chart-filter">
+  <label for="chartRange">
+    Zeitraum:
+  </label>
+
+  <select id="chartRange">
+    <option value="7">Letzte 7 Tage</option>
+    <option value="30" selected>Letzte 30 Tage</option>
+    <option value="90">Letzte 90 Tage</option>
+    <option value="180">Letzte 180 Tage</option>
+    <option value="all">Alle Daten</option>
+  </select>
+</div>
+
   <div class="grid" id="charts-section"></div>
 
   <h2 class="section-title">
@@ -337,6 +367,9 @@
     };
 
     const state = {};
+
+    let allData = [];
+    let chartInstances = [];
 
     function scoreClass(value) {
       if (!Number.isFinite(value)) {
@@ -459,15 +492,43 @@
         return response.json();
       })
       .then(data => {
-        if (!Array.isArray(data)) {
+
+  allData = data;
+
+  if (!Array.isArray(data)) {
           throw new Error(
             "results.json enthält kein gültiges JSON-Array."
           );
         }
 
-        buildNav(data);
-        buildCharts(data);
-        buildAllTables(data);
+      buildNav(data);
+
+const savedRange =
+  localStorage.getItem("chartRange");
+
+if (savedRange) {
+  document.getElementById(
+    "chartRange"
+  ).value = savedRange;
+}
+
+buildCharts(
+  getFilteredChartData()
+);
+
+document
+  .getElementById("chartRange")
+  .addEventListener("change", () => {
+
+    localStorage.setItem(
+      "chartRange",
+      document.getElementById("chartRange").value
+    );
+
+    updateCharts();
+  });
+
+buildAllTables(data);
       })
       .catch(error => {
         console.error(error);
@@ -532,6 +593,55 @@
         anchorLinks.appendChild(anchorLink);
       });
     }
+
+function getFilteredChartData() {
+
+  const range =
+    document.getElementById("chartRange")
+      ?.value || "30";
+
+  if (range === "all") {
+    return allData;
+  }
+
+  const cutoffDate = new Date();
+
+cutoffDate.setHours(
+  0,
+  0,
+  0,
+  0
+);
+
+cutoffDate.setDate(
+  cutoffDate.getDate() - Number(range)
+);
+
+  return allData.filter(item => {
+
+    const itemDate =
+      new Date(item.date);
+
+    return itemDate >= cutoffDate;
+  });
+}
+
+function updateCharts() {
+
+  chartInstances.forEach(chart =>
+    chart.destroy()
+  );
+
+  chartInstances = [];
+
+  document.getElementById(
+    "charts-section"
+  ).innerHTML = "";
+
+  buildCharts(
+    getFilteredChartData()
+  );
+}
 
     function buildCharts(data) {
       const chartsContainer =
@@ -611,7 +721,7 @@
             `chart-${pageId}`
           );
 
-        new Chart(canvas, {
+        const chart = new Chart(canvas, {
           type: "line",
 
           data: {
@@ -735,7 +845,7 @@
                   maxRotation: 50,
                   minRotation: 45,
                   autoSkip: true,
-                  maxTicksLimit: 18
+                  maxTicksLimit: 10
                 }
               },
 
@@ -749,6 +859,7 @@
             }
           }
         });
+        chartInstances.push(chart);
       });
     }
 
