@@ -26,28 +26,46 @@
       margin-bottom: 24px;
     }
 
-    .info-box {
+.info-box {
   background: #eef6ff;
   border: 1px solid #cbdff7;
   border-left: 5px solid #4CAF50;
   border-radius: 8px;
-  padding: 16px 18px;
   margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.info-box summary {
+  cursor: pointer;
+  padding: 14px 18px;
+  font-weight: 600;
   color: #333;
+  list-style: none;
 }
 
-.info-box strong {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 0.95rem;
+.info-box summary::-webkit-details-marker {
+  display: none;
 }
 
-.info-box p {
-  margin: 8px 0;
-  line-height: 1.45;
+.info-box summary::before {
+  content: "▶ ";
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.info-box[open] summary::before {
+  content: "▼ ";
+}
+
+.info-content {
+  padding: 0 18px 16px 18px;
+}
+
+.info-content p {
+  margin: 10px 0;
+  line-height: 1.5;
   font-size: 0.9rem;
 }
-
 
 .nav {
   display: flex;
@@ -351,34 +369,41 @@
     Übersicht der Lighthouse-Messungen für ausgewählte Seitentypen von benu.ch.
   </p>
 
-  <div class="info-box">
-  <strong>ℹ️ Hinweis zur Interpretation der Lighthouse-Werte</strong>
+<details class="info-box">
 
-  <p>
-    Die dargestellten Werte stammen aus automatisierten Lighthouse-Tests,
-    welche über GitHub Actions in einer standardisierten Cloud-Umgebung
-    ausgeführt werden.
-  </p>
+  <summary>
+    ℹ️ Hinweise zur Interpretation der Lighthouse-Werte
+  </summary>
 
-<p>
-  Direkte Lighthouse-Tests im lokalen Chrome Browser können von diesen
-  Ergebnissen abweichen. Ursachen dafür sind unter anderem unterschiedliche
-  Hardware, Netzwerke, Browser-Versionen, Lighthouse-Versionen sowie
-  der Zeitpunkt und Standort der Messung.
-</p>
+  <div class="info-content">
 
-<p>
-  Zur besseren Vergleichbarkeit werden zusätzlich zu den Lighthouse-Scores
-  technische Performance-Kennzahlen wie
-  <strong>TTFB</strong>,
-  <strong>FCP</strong>,
-  <strong>LCP</strong>,
-  <strong>TBT</strong> und
-  <strong>CLS</strong>
-  erfasst und ausgewertet.
-</p>
-``
-</div>
+    <p>
+      Die dargestellten Werte stammen aus automatisierten Lighthouse-Tests,
+      welche über GitHub Actions in einer standardisierten Cloud-Umgebung
+      ausgeführt werden.
+    </p>
+
+    <p>
+      Direkte Lighthouse-Tests im lokalen Chrome Browser können von diesen
+      Ergebnissen abweichen. Ursachen dafür sind unter anderem unterschiedliche
+      Hardware, Netzwerke, Browser-Versionen, Lighthouse-Versionen sowie
+      der Zeitpunkt und Standort der Messung.
+    </p>
+
+    <p>
+      Zur besseren Vergleichbarkeit werden zusätzlich zu den Lighthouse-Scores
+      technische Performance-Kennzahlen wie
+      <strong>TTFB</strong>,
+      <strong>FCP</strong>,
+      <strong>LCP</strong>,
+      <strong>TBT</strong> und
+      <strong>CLS</strong>
+      erfasst und ausgewertet.
+    </p>
+
+  </div>
+
+</details>
 
   <nav class="nav" id="topNav"></nav>
 
