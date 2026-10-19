@@ -471,9 +471,6 @@ const PAGE_URLS = {
         if (item.tbt != null) group.tbt.push(item.tbt);
         if (item.cls != null) group.cls.push(item.cls);
 
-        if (item.ttfb != null) {
-        group.ttfb.push(item.ttfb);
-}
       });
 
     return Array.from(dailyGroups.entries())
@@ -789,7 +786,6 @@ card.innerHTML = `
   <th data-page="${id}" data-col="tbt">TBT</th>
   <th data-page="${id}" data-col="cls">CLS</th>
 </tr>
-``
 </thead>
 
             <tbody id="tbody-${id}"></tbody>
