@@ -35,9 +35,9 @@ jobs:
 
           - name: Brand
             url: https://www.benu.ch/b/la-roche-posay
-          
+
           - name: Pharmacy
-            url: https://www.benu.ch/p/benu-zurich-bahnhof-altstetten           
+            url: https://www.benu.ch/p/benu-zurich-bahnhof-altstetten
 
     steps:
       - name: Checkout Repository
@@ -51,13 +51,25 @@ jobs:
       - name: Install Chrome
         uses: browser-actions/setup-chrome@v1
 
-      - name: Verify Chrome Installation
+      - name: Verify Environment
         run: |
+          echo "===== SYSTEM ====="
+          uname -a
+
+          echo ""
+          echo "===== CHROME ====="
           which chrome
           chrome --version
 
       - name: Install Lighthouse
-        run: npm install -g lighthouse
+        run: |
+          npm install -g lighthouse@12
+
+      - name: Verify Lighthouse
+        run: |
+          echo ""
+          echo "===== LIGHTHOUSE ====="
+          lighthouse --version
 
       - name: Run Lighthouse
         run: |
@@ -65,7 +77,10 @@ jobs:
             --output=json \
             --output-path=./report.json \
             --chrome-path=$(which chrome) \
-            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage --disable-gpu" \
+            --form-factor=mobile \
+            --screenEmulation.mobile=true \
+            --preset=perf \
+            --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu" \
             --quiet
 
       - name: Prüfe ob Report existiert
@@ -73,27 +88,105 @@ jobs:
           ls -la
           ls -la report.json
 
+      - name: Debug Lighthouse Metrics
+        run: |
+          python3 << EOF
+          import json
+
+          r = json.load(open("report.json"))
+
+          print("")
+          print("========== LIGHTHOUSE ==========")
+
+          print("Performance:",
+                round(r["categories"]["performance"]["score"] * 100))
+
+          print("Accessibility:",
+                round(r["categories"]["accessibility"]["score"] * 100))
+
+          print("SEO:",
+                round(r["categories"]["seo"]["score"] * 100))
+
+          print("Best Practices:",
+                round(r["categories"]["best-practices"]["score"] * 100))
+
+          print("")
+          print("========== CORE METRICS ==========")
+
+          print("FCP:",
+                r["audits"]["first-contentful-paint"]["displayValue"])
+
+          print("LCP:",
+                r["audits"]["largest-contentful-paint"]["displayValue"])
+
+          print("TBT:",
+                r["audits"]["total-blocking-time"]["displayValue"])
+
+          print("CLS:",
+                r["audits"]["cumulative-layout-shift"]["displayValue"])
+
+          print("Speed Index:",
+                r["audits"]["speed-index"]["displayValue"])
+          EOF
+
       - name: Score als Artifact speichern
         run: |
           DATE=$(date -u +"%Y-%m-%d %H:%M")
 
-          PERF=$(python3 -c "import json; d=json.load(open('report.json')); print(round(d['categories']['performance']['score']*100))")
-          ACC=$(python3 -c "import json; d=json.load(open('report.json')); print(round(d['categories']['accessibility']['score']*100))")
-          SEO=$(python3 -c "import json; d=json.load(open('report.json')); print(round(d['categories']['seo']['score']*100))")
-          BP=$(python3 -c "import json; d=json.load(open('report.json')); print(round(d['categories']['best-practices']['score']*100))")
+          CHROME_VERSION=$(chrome --version | sed 's/Google Chrome //')
 
-          cat > score-${{ matrix.name }}.json << EOF
-          {
-            "date":"$DATE",
-            "page":"${{ matrix.name }}",
-            "performance":$PERF,
-            "accessibility":$ACC,
-            "seo":$SEO,
-            "best_practices":$BP
+          LIGHTHOUSE_VERSION=$(lighthouse --version)
+
+          python3 << EOF
+          import json
+
+          r = json.load(open("report.json"))
+
+          data = {
+              "date": "$DATE",
+              "page": "${{ matrix.name }}",
+
+              "performance":
+                  round(r["categories"]["performance"]["score"] * 100),
+
+              "accessibility":
+                  round(r["categories"]["accessibility"]["score"] * 100),
+
+              "seo":
+                  round(r["categories"]["seo"]["score"] * 100),
+
+              "best_practices":
+                  round(r["categories"]["best-practices"]["score"] * 100),
+
+              "fcp":
+                  r["audits"]["first-contentful-paint"]["numericValue"],
+
+              "lcp":
+                  r["audits"]["largest-contentful-paint"]["numericValue"],
+
+              "tbt":
+                  r["audits"]["total-blocking-time"]["numericValue"],
+
+              "cls":
+                  r["audits"]["cumulative-layout-shift"]["numericValue"],
+
+              "speed_index":
+                  r["audits"]["speed-index"]["numericValue"],
+
+              "chrome_version":
+                  "$CHROME_VERSION",
+
+              "lighthouse_version":
+                  "$LIGHTHOUSE_VERSION"
           }
-          EOF
 
-          cat score-${{ matrix.name }}.json
+          filename = "score-${{ matrix.name }}.json"
+
+          with open(filename, "w") as f:
+              json.dump(data, f, indent=2)
+
+          print(open(filename).read())
+          EOF
 
       - name: Artifact hochladen
         uses: actions/upload-artifact@v4
@@ -133,6 +226,7 @@ jobs:
 
           for file in glob.glob("scores/score-*/*.json"):
               print(f"Lese {file}")
+
               with open(file, encoding="utf-8") as f:
                   data.append(json.load(f))
 
