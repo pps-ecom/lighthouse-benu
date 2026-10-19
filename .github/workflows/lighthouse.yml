@@ -112,24 +112,29 @@ jobs:
           print("")
           print("========== CORE METRICS ==========")
 
-          print("FCP:",
-                r["audits"]["first-contentful-paint"]["displayValue"])
+print("FCP:",
+      r["audits"]["first-contentful-paint"]["displayValue"])
 
-          print("LCP:",
-                r["audits"]["largest-contentful-paint"]["displayValue"])
+print("LCP:",
+      r["audits"]["largest-contentful-paint"]["displayValue"])
 
-          print("TBT:",
-                r["audits"]["total-blocking-time"]["displayValue"])
+print("TBT:",
+      r["audits"]["total-blocking-time"]["displayValue"])
 
-          print("CLS:",
-                r["audits"]["cumulative-layout-shift"]["displayValue"])
+print("CLS:",
+      r["audits"]["cumulative-layout-shift"]["displayValue"])
 
-          print("Speed Index:",
+print("Speed Index:",
       r["audits"]["speed-index"]["displayValue"])
 
-if "server-response-time" in r["audits"]:
-    print("TTFB:",
-          r["audits"]["server-response-time"]["displayValue"])
+print("TTFB:",
+      r["audits"].get(
+          "server-response-time",
+          {}
+      ).get(
+          "displayValue",
+          "nicht verfügbar"
+      ))
 
           EOF
 
