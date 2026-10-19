@@ -125,8 +125,9 @@ jobs:
                 r["audits"]["cumulative-layout-shift"]["displayValue"])
 
           print("Speed Index:",
-                r["audits"]["speed-index"]["displayValue"])
-                if "server-response-time" in r["audits"]:
+      r["audits"]["speed-index"]["displayValue"])
+
+if "server-response-time" in r["audits"]:
     print("TTFB:",
           r["audits"]["server-response-time"]["displayValue"])
 
