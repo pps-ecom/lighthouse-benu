@@ -379,12 +379,17 @@ const PAGE_URLS = {
   Pharmacy: "https://www.benu.ch/p/benu-luzern-bahnhof"
 };
 
-    const COLORS = {
-      performance: "#4CAF50",
-      accessibility: "#2196F3",
-      seo: "#FF9800",
-      best_practices: "#9C27B0"
-    };
+const COLORS = {
+  performance: "#4CAF50",
+  accessibility: "#2196F3",
+  seo: "#FF9800",
+  best_practices: "#9C27B0",
+
+  ttfb: "#F44336",
+  fcp: "#009688",
+  lcp: "#795548",
+  tbt: "#607D8B"
+};
 
     const state = {};
     let allData = [];
@@ -580,6 +585,10 @@ card.innerHTML = `
     <canvas id="chart-${pageId}"></canvas>
   </div>
 
+  <div class="chart-container" style="margin-top:20px;">
+    <canvas id="tech-chart-${pageId}"></canvas>
+  </div>
+
   <div class="chart-url">
     Geprüfte URL:
     <a href="${PAGE_URLS[page]}"
@@ -683,6 +692,56 @@ card.innerHTML = `
         });
 
         chartInstances.push(chart);
+        const techCanvas =
+  document.getElementById(`tech-chart-${pageId}`);
+
+const techChart = new Chart(techCanvas, {
+  type: "line",
+
+  data: {
+    labels: medianData.map(item => item.date),
+
+    datasets: [
+      createMedianDataset(
+        "TTFB (ms)",
+        medianData.map(item => item.ttfb),
+        COLORS.ttfb
+      ),
+
+      createMedianDataset(
+        "FCP (ms)",
+        medianData.map(item => item.fcp),
+        COLORS.fcp
+      ),
+
+      createMedianDataset(
+        "LCP (ms)",
+        medianData.map(item => item.lcp),
+        COLORS.lcp
+      ),
+
+      createMedianDataset(
+        "TBT (ms)",
+        medianData.map(item => item.tbt),
+        COLORS.tbt
+      )
+    ]
+  },
+
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+
+    plugins: {
+      title: {
+        display: true,
+        text: "Core Web Vitals & Performance Metrics"
+      }
+    }
+  }
+});
+
+chartInstances.push(techChart);
       });
     }
 
