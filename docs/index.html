@@ -26,24 +26,47 @@
       margin-bottom: 24px;
     }
 
-    .nav {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 28px;
-    }
+    .info-box {
+  background: #eef6ff;
+  border: 1px solid #cbdff7;
+  border-left: 5px solid #4CAF50;
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+  color: #333;
+}
 
-    .nav a,
-    .anchor-links a {
-      padding: 6px 14px;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      color: #333;
-      text-decoration: none;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-    }
+.info-box strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.info-box p {
+  margin: 8px 0;
+  line-height: 1.45;
+  font-size: 0.9rem;
+}
+
+
+.nav {
+  display: flex;
+  gap: 10px;
+   flex-wrap: wrap;
+   margin-bottom: 28px;
+}
+
+.nav a,
+.anchor-links a {
+  padding: 6px 14px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: #333;
+  text-decoration: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
 
     .nav a:hover,
     .anchor-links a:hover {
@@ -327,6 +350,30 @@
   <p class="subtitle">
     Übersicht der Lighthouse-Messungen für ausgewählte Seitentypen von benu.ch.
   </p>
+
+  <div class="info-box">
+  <strong>ℹ️ Hinweis zur Interpretation der Lighthouse-Werte</strong>
+
+  <p>
+    Die dargestellten Werte stammen aus automatisierten Lighthouse-Tests,
+    welche über GitHub Actions in einer standardisierten Cloud-Umgebung
+    ausgeführt werden.
+  </p>
+
+  <p>
+    Direkte Lighthouse-Tests im lokalen Chrome Browser können von diesen
+    Ergebnissen abweichen. Ursachen dafür sind unter anderem unterschiedliche
+    Hardware, Netzwerke, Browser-Versionen, Lighthouse-Versionen sowie
+    der Zeitpunkt und Standort der Messung.
+  </p>
+
+  <p>
+    Zur besseren Vergleichbarkeit werden zusätzlich zu den Lighthouse-Scores
+    auch technische Kennzahlen wie <strong>TTFB</strong>,
+    <strong>FCP</strong>, <strong>LCP</strong> und
+    <strong>TBT</strong> erfasst und ausgewertet.
+  </p>
+</div>
 
   <nav class="nav" id="topNav"></nav>
 
