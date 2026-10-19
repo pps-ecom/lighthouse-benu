@@ -921,6 +921,9 @@ chartInstances.push(techChart);
   <th data-page="${id}" data-col="lcp">LCP</th>
   <th data-page="${id}" data-col="tbt">TBT</th>
   <th data-page="${id}" data-col="cls">CLS</th>
+  <th data-page="${id}" data-col="chrome_version">Chromium</th>
+  <th data-page="${id}" data-col="lighthouse_version">Lighthouse</th>
+
 </tr>
 </thead>
 
@@ -1099,6 +1102,17 @@ chartInstances.push(techChart);
     : "-"}
 </td>
 
+<td>
+  ${item.chrome_version
+  ? item.chrome_version
+      .replace("Chromium ", "")
+      .replace("Google Chrome ", "")
+  : "-"}
+</td>
+
+<td>
+  ${item.lighthouse_version || "-"}
+</td>
         `;
 
         tableBody.appendChild(row);
