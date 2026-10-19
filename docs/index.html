@@ -465,30 +465,34 @@ const PAGE_URLS = {
         group.seo.push(item.seo);
         group.best_practices.push(item.best_practices);
         group.runs += 1;
-        group.fcp.push(item.fcp);
-        group.lcp.push(item.lcp);
-        group.tbt.push(item.tbt);
-        group.cls.push(item.cls);
+        if (item.ttfb != null) group.ttfb.push(item.ttfb);
+        if (item.fcp != null) group.fcp.push(item.fcp);
+        if (item.lcp != null) group.lcp.push(item.lcp);
+        if (item.tbt != null) group.tbt.push(item.tbt);
+        if (item.cls != null) group.cls.push(item.cls);
 
-if (item.ttfb != null) {
-  group.ttfb.push(item.ttfb);
+        if (item.ttfb != null) {
+        group.ttfb.push(item.ttfb);
 }
       });
 
-      return Array.from(dailyGroups.entries())
-        .map(([date, values]) => ({
-          date,
-          performance: calculateMedian(values.performance),
-          accessibility: calculateMedian(values.accessibility),
-          seo: calculateMedian(values.seo),
-          best_practices: calculateMedian(values.best_practices),
-          runs: values.runs,
-          fcp: calculateMedian(values.fcp),
-          lcp: calculateMedian(values.lcp),
-          tbt: calculateMedian(values.tbt),
-          cls: calculateMedian(values.cls),
-          ttfb: calculateMedian(values.ttfb)
-        }))
+    return Array.from(dailyGroups.entries())
+      .map(([date, values]) => ({
+    date,
+
+    performance: calculateMedian(values.performance),
+    accessibility: calculateMedian(values.accessibility),
+    seo: calculateMedian(values.seo),
+    best_practices: calculateMedian(values.best_practices),
+
+    ttfb: calculateMedian(values.ttfb),
+    fcp: calculateMedian(values.fcp),
+    lcp: calculateMedian(values.lcp),
+    tbt: calculateMedian(values.tbt),
+    cls: calculateMedian(values.cls),
+
+    runs: values.runs
+  }))
         .sort((a, b) => a.date.localeCompare(b.date));
     }
 
@@ -772,19 +776,20 @@ card.innerHTML = `
 
           <table>
 <thead>
-  <tr>
-    <th data-page="${id}" data-col="date">Datum</th>
-    <th data-page="${id}" data-col="performance">Performance</th>
-    <th data-page="${id}" data-col="accessibility">Accessibility</th>
-    <th data-page="${id}" data-col="seo">SEO</th>
-    <th data-page="${id}" data-col="best_practices">Best Practices</th>
+<tr>
+  <th data-page="${id}" data-col="date">Datum</th>
+  <th data-page="${id}" data-col="performance">Performance</th>
+  <th data-page="${id}" data-col="accessibility">Accessibility</th>
+  <th data-page="${id}" data-col="seo">SEO</th>
+  <th data-page="${id}" data-col="best_practices">Best Practices</th>
 
-    <th data-page="${id}" data-col="fcp">FCP</th>
-    <th data-page="${id}" data-col="lcp">LCP</th>
-    <th data-page="${id}" data-col="tbt">TBT</th>
-    <th data-page="${id}" data-col="cls">CLS</th>
-    <th data-page="${id}" data-col="ttfb">TTFB</th>
-  </tr>
+  <th data-page="${id}" data-col="ttfb">TTFB</th>
+  <th data-page="${id}" data-col="fcp">FCP</th>
+  <th data-page="${id}" data-col="lcp">LCP</th>
+  <th data-page="${id}" data-col="tbt">TBT</th>
+  <th data-page="${id}" data-col="cls">CLS</th>
+</tr>
+``
 </thead>
 
             <tbody id="tbody-${id}"></tbody>
@@ -932,11 +937,36 @@ card.innerHTML = `
               ${item.best_practices}
             </span>
           </td>
-          <td>${(item.fcp / 1000).toFixed(2)} s</td>
-          <td>${(item.lcp / 1000).toFixed(2)} s</td>
-          <td>${Math.round(item.tbt)} ms</td>
-          <td>${Number(item.cls).toFixed(3)}</td>
-          <td>${item.ttfb ? Math.round(item.ttfb) + " ms" : "-"}</td>
+<td>
+  ${item.ttfb
+    ? Math.round(item.ttfb) + " ms"
+    : "-"}
+</td>
+
+<td>
+  ${item.fcp
+    ? (item.fcp / 1000).toFixed(2) + " s"
+    : "-"}
+</td>
+
+<td>
+  ${item.lcp
+    ? (item.lcp / 1000).toFixed(2) + " s"
+    : "-"}
+</td>
+
+<td>
+  ${item.tbt
+    ? Math.round(item.tbt) + " ms"
+    : "-"}
+</td>
+
+<td>
+  ${item.cls != null
+    ? Number(item.cls).toFixed(3)
+    : "-"}
+</td>
+
         `;
 
         tableBody.appendChild(row);
