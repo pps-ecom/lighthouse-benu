@@ -79,7 +79,6 @@ jobs:
             --chrome-path=$(which chrome) \
             --form-factor=mobile \
             --screenEmulation.mobile=true \
-            --preset=perf \
             --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu" \
             --quiet
 
