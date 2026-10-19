@@ -126,6 +126,10 @@ jobs:
 
           print("Speed Index:",
                 r["audits"]["speed-index"]["displayValue"])
+                if "server-response-time" in r["audits"]:
+    print("TTFB:",
+          r["audits"]["server-response-time"]["displayValue"])
+
           EOF
 
       - name: Score als Artifact speichern
@@ -171,6 +175,15 @@ jobs:
 
               "speed_index":
                   r["audits"]["speed-index"]["numericValue"],
+                  
+               "ttfb":
+                  r["audits"].get(
+                      "server-response-time",
+                      {}
+                  ).get(
+                    "numericValue",
+                    None
+                  ),
 
               "chrome_version":
                   "$CHROME_VERSION",
