@@ -29480,5 +29480,21 @@
     "ttfb": 2314.259,
     "chrome_version": "Chromium 158.0.8116.0 ",
     "lighthouse_version": "12.8.2"
+  },
+  {
+    "date": "2026-10-21 15:31",
+    "page": "Editorial",
+    "performance": 52,
+    "accessibility": 94,
+    "seo": 100,
+    "best_practices": 96,
+    "fcp": 3658.826499999999,
+    "lcp": 5157.422291519165,
+    "tbt": 821,
+    "cls": 0.0002513012025662709,
+    "speed_index": 4574.381963529386,
+    "ttfb": 414.812,
+    "chrome_version": "Chromium 158.0.8117.0 ",
+    "lighthouse_version": "12.8.2"
   }
 ]
