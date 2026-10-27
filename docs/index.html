@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lighthouse Dashboard - benu.ch</title>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -26,65 +27,65 @@
       margin-bottom: 24px;
     }
 
-.info-box {
-  background: #eef6ff;
-  border: 1px solid #cbdff7;
-  border-left: 5px solid #4CAF50;
-  border-radius: 8px;
-  margin-bottom: 24px;
-  overflow: hidden;
-}
+    .info-box {
+      background: #eef6ff;
+      border: 1px solid #cbdff7;
+      border-left: 5px solid #4CAF50;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
 
-.info-box summary {
-  cursor: pointer;
-  padding: 14px 18px;
-  font-weight: 600;
-  color: #333;
-  list-style: none;
-}
+    .info-box summary {
+      cursor: pointer;
+      padding: 14px 18px;
+      font-weight: 600;
+      color: #333;
+      list-style: none;
+    }
 
-.info-box summary::-webkit-details-marker {
-  display: none;
-}
+    .info-box summary::-webkit-details-marker {
+      display: none;
+    }
 
-.info-box summary::before {
-  content: "▶ ";
-  color: #4CAF50;
-  font-weight: bold;
-}
+    .info-box summary::before {
+      content: "▶ ";
+      color: #4CAF50;
+      font-weight: bold;
+    }
 
-.info-box[open] summary::before {
-  content: "▼ ";
-}
+    .info-box[open] summary::before {
+      content: "▼ ";
+    }
 
-.info-content {
-  padding: 0 18px 16px 18px;
-}
+    .info-content {
+      padding: 0 18px 16px 18px;
+    }
 
-.info-content p {
-  margin: 10px 0;
-  line-height: 1.5;
-  font-size: 0.9rem;
-}
+    .info-content p {
+      margin: 10px 0;
+      line-height: 1.5;
+      font-size: 0.9rem;
+    }
 
-.nav {
-  display: flex;
-  gap: 10px;
-   flex-wrap: wrap;
-   margin-bottom: 28px;
-}
+    .nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
 
-.nav a,
-.anchor-links a {
-  padding: 6px 14px;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  color: #333;
-  text-decoration: none;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
+    .nav a,
+    .anchor-links a {
+      padding: 6px 14px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: #333;
+      text-decoration: none;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
 
     .nav a:hover,
     .anchor-links a:hover {
@@ -138,6 +139,13 @@
       min-height: 360px;
     }
 
+    /* CLS bewusst als kleineres separates Diagramm */
+    .cls-chart-container {
+      position: relative;
+      height: 220px;
+      margin-top: 20px;
+    }
+
     .chart-filter {
       margin-bottom: 20px;
       display: flex;
@@ -160,22 +168,21 @@
     }
 
     .chart-url {
-  margin-top: 12px;
-  padding-top: 8px;
-  border-top: 1px solid #eee;
-  font-size: 0.8rem;
-  color: #777;
-}
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px solid #eee;
+      font-size: 0.8rem;
+      color: #777;
+    }
 
+    .chart-url a {
+      color: #4CAF50;
+      text-decoration: none;
+    }
 
-.chart-url a {
-  color: #4CAF50;
-  text-decoration: none;
-}
-
-.chart-url a:hover {
-  text-decoration: underline;
-}
+    .chart-url a:hover {
+      text-decoration: underline;
+    }
 
     .table-wrap {
       background: white;
@@ -356,11 +363,16 @@
       .chart-container {
         min-height: 320px;
       }
+
+      .cls-chart-container {
+        height: 220px;
+      }
     }
   </style>
 </head>
 
 <body>
+
   <div id="top"></div>
 
   <h1>🔦 Lighthouse Dashboard - benu.ch</h1>
@@ -369,41 +381,41 @@
     Übersicht der Lighthouse-Messungen für ausgewählte Seitentypen von benu.ch.
   </p>
 
-<details class="info-box">
+  <details class="info-box">
 
-  <summary>
-    ℹ️ Hinweise zur Interpretation der Lighthouse-Werte
-  </summary>
+    <summary>
+      ℹ️ Hinweise zur Interpretation der Lighthouse-Werte
+    </summary>
 
-  <div class="info-content">
+    <div class="info-content">
 
-    <p>
-      Die dargestellten Werte stammen aus automatisierten Lighthouse-Tests,
-      welche über GitHub Actions in einer standardisierten Cloud-Umgebung
-      ausgeführt werden.
-    </p>
+      <p>
+        Die dargestellten Werte stammen aus automatisierten Lighthouse-Tests,
+        welche über GitHub Actions in einer standardisierten Cloud-Umgebung
+        ausgeführt werden.
+      </p>
 
-    <p>
-      Direkte Lighthouse-Tests im lokalen Chrome Browser können von diesen
-      Ergebnissen abweichen. Ursachen dafür sind unter anderem unterschiedliche
-      Hardware, Netzwerke, Browser-Versionen, Lighthouse-Versionen sowie
-      der Zeitpunkt und Standort der Messung.
-    </p>
+      <p>
+        Direkte Lighthouse-Tests im lokalen Chrome Browser können von diesen
+        Ergebnissen abweichen. Ursachen dafür sind unter anderem unterschiedliche
+        Hardware, Netzwerke, Browser-Versionen, Lighthouse-Versionen sowie
+        der Zeitpunkt und Standort der Messung.
+      </p>
 
-    <p>
-      Zur besseren Vergleichbarkeit werden zusätzlich zu den Lighthouse-Scores
-      technische Performance-Kennzahlen wie
-      <strong>TTFB</strong>,
-      <strong>FCP</strong>,
-      <strong>LCP</strong>,
-      <strong>TBT</strong> und
-      <strong>CLS</strong>
-      erfasst und ausgewertet.
-    </p>
+      <p>
+        Zur besseren Vergleichbarkeit werden zusätzlich zu den Lighthouse-Scores
+        technische Performance-Kennzahlen wie
+        <strong>TTFB</strong>,
+        <strong>FCP</strong>,
+        <strong>LCP</strong>,
+        <strong>TBT</strong> und
+        <strong>CLS</strong>
+        erfasst und ausgewertet.
+      </p>
 
-  </div>
+    </div>
 
-</details>
+  </details>
 
   <nav class="nav" id="topNav"></nav>
 
@@ -417,6 +429,7 @@
   </p>
 
   <div class="chart-filter">
+
     <label for="chartRange">Zeitraum:</label>
 
     <select id="chartRange">
@@ -426,6 +439,7 @@
       <option value="180">Letzte 180 Tage</option>
       <option value="all">Alle Daten</option>
     </select>
+
   </div>
 
   <div class="grid" id="charts-section"></div>
@@ -438,6 +452,7 @@
   <div id="tables"></div>
 
   <script>
+
     const PAGES = [
       "Home",
       "Editorial",
@@ -447,32 +462,37 @@
       "Pharmacy"
     ];
 
-const PAGE_URLS = {
-  Home: "https://www.benu.ch",
-  Editorial: "https://www.benu.ch/e/flohsamen-das-kleine-wundermittel-mit-grosser-wirkung",
-  PDP: "https://www.benu.ch/kijimea-reizdarm-pro-kapsel-84-stuck",
-  Category: "https://www.benu.ch/c/gesundheit/",
-  Brand: "https://www.benu.ch/b/la-roche-posay",
-  Pharmacy: "https://www.benu.ch/p/benu-luzern-bahnhof"
-};
+    const PAGE_URLS = {
+      Home: "https://www.benu.ch",
+      Editorial: "https://www.benu.ch/e/flohsamen-das-kleine-wundermittel-mit-grosser-wirkung",
+      PDP: "https://www.benu.ch/kijimea-reizdarm-pro-kapsel-84-stuck",
+      Category: "https://www.benu.ch/c/gesundheit/",
+      Brand: "https://www.benu.ch/b/la-roche-posay",
+      Pharmacy: "https://www.benu.ch/p/benu-luzern-bahnhof"
+    };
 
-const COLORS = {
-  performance: "#4CAF50",
-  accessibility: "#2196F3",
-  seo: "#FF9800",
-  best_practices: "#9C27B0",
+    const COLORS = {
+      performance: "#4CAF50",
+      accessibility: "#2196F3",
+      seo: "#FF9800",
+      best_practices: "#9C27B0",
 
-  ttfb: "#F44336",
-  fcp: "#009688",
-  lcp: "#795548",
-  tbt: "#607D8B"
-};
+      ttfb: "#F44336",
+      fcp: "#009688",
+      lcp: "#795548",
+      tbt: "#607D8B",
+
+      /* Eigene Farbe für CLS */
+      cls: "#E91E63"
+    };
 
     const state = {};
+
     let allData = [];
     let chartInstances = [];
 
     function scoreClass(value) {
+
       if (!Number.isFinite(value)) {
         return "na";
       }
@@ -493,6 +513,7 @@ const COLORS = {
     }
 
     function calculateMedian(values) {
+
       const sortedValues = values
         .map(value => Number(value))
         .filter(value => Number.isFinite(value))
@@ -502,9 +523,11 @@ const COLORS = {
         return null;
       }
 
-      const middleIndex = Math.floor(sortedValues.length / 2);
+      const middleIndex =
+        Math.floor(sortedValues.length / 2);
 
       if (sortedValues.length % 2 === 0) {
+
         return (
           sortedValues[middleIndex - 1] +
           sortedValues[middleIndex]
@@ -515,84 +538,140 @@ const COLORS = {
     }
 
     function getDailyMedians(data) {
+
       const dailyGroups = new Map();
 
       data.forEach(item => {
-        const date = String(item.date).slice(0, 10);
+
+        const date =
+          String(item.date).slice(0, 10);
 
         if (!date) {
           return;
         }
 
         if (!dailyGroups.has(date)) {
+
           dailyGroups.set(date, {
+
             performance: [],
             accessibility: [],
             seo: [],
             best_practices: [],
 
+            ttfb: [],
             fcp: [],
             lcp: [],
             tbt: [],
             cls: [],
-            ttfb: [],
 
             runs: 0
           });
         }
 
-        const group = dailyGroups.get(date);
+        const group =
+          dailyGroups.get(date);
+
         group.performance.push(item.performance);
         group.accessibility.push(item.accessibility);
         group.seo.push(item.seo);
         group.best_practices.push(item.best_practices);
-        group.runs += 1;
-        if (item.ttfb != null) group.ttfb.push(item.ttfb);
-        if (item.fcp != null) group.fcp.push(item.fcp);
-        if (item.lcp != null) group.lcp.push(item.lcp);
-        if (item.tbt != null) group.tbt.push(item.tbt);
-        if (item.cls != null) group.cls.push(item.cls);
 
+        group.runs += 1;
+
+        if (item.ttfb != null) {
+          group.ttfb.push(item.ttfb);
+        }
+
+        if (item.fcp != null) {
+          group.fcp.push(item.fcp);
+        }
+
+        if (item.lcp != null) {
+          group.lcp.push(item.lcp);
+        }
+
+        if (item.tbt != null) {
+          group.tbt.push(item.tbt);
+        }
+
+        if (item.cls != null) {
+          group.cls.push(item.cls);
+        }
       });
 
-    return Array.from(dailyGroups.entries())
-      .map(([date, values]) => ({
-    date,
+      return Array.from(dailyGroups.entries())
 
-    performance: calculateMedian(values.performance),
-    accessibility: calculateMedian(values.accessibility),
-    seo: calculateMedian(values.seo),
-    best_practices: calculateMedian(values.best_practices),
+        .map(([date, values]) => ({
 
-    ttfb: calculateMedian(values.ttfb),
-    fcp: calculateMedian(values.fcp),
-    lcp: calculateMedian(values.lcp),
-    tbt: calculateMedian(values.tbt),
-    cls: calculateMedian(values.cls),
+          date,
 
-    runs: values.runs
-  }))
-        .sort((a, b) => a.date.localeCompare(b.date));
+          performance:
+            calculateMedian(values.performance),
+
+          accessibility:
+            calculateMedian(values.accessibility),
+
+          seo:
+            calculateMedian(values.seo),
+
+          best_practices:
+            calculateMedian(values.best_practices),
+
+          ttfb:
+            calculateMedian(values.ttfb),
+
+          fcp:
+            calculateMedian(values.fcp),
+
+          lcp:
+            calculateMedian(values.lcp),
+
+          tbt:
+            calculateMedian(values.tbt),
+
+          cls:
+            calculateMedian(values.cls),
+
+          runs:
+            values.runs
+        }))
+
+        .sort(
+          (a, b) =>
+            a.date.localeCompare(b.date)
+        );
     }
 
     function getFilteredChartData() {
+
       const range =
-        document.getElementById("chartRange")?.value || "30";
+        document.getElementById("chartRange")?.value ||
+        "30";
 
       if (range === "all") {
         return allData;
       }
 
       const cutoffDate = new Date();
+
       cutoffDate.setHours(0, 0, 0, 0);
+
       cutoffDate.setDate(
-        cutoffDate.getDate() - (Number(range) - 1)
+        cutoffDate.getDate() -
+        (Number(range) - 1)
       );
 
       return allData.filter(item => {
-        const itemDate = new Date(item.date);
 
-        if (Number.isNaN(itemDate.getTime())) {
+        const itemDate =
+          new Date(item.date);
+
+        if (
+          Number.isNaN(
+            itemDate.getTime()
+          )
+        ) {
           return false;
         }
 
@@ -601,290 +680,692 @@ const COLORS = {
     }
 
     function updateCharts() {
-      chartInstances.forEach(chart => chart.destroy());
+
+      chartInstances.forEach(
+        chart => chart.destroy()
+      );
+
       chartInstances = [];
 
-      document.getElementById("charts-section").innerHTML = "";
-      buildCharts(getFilteredChartData());
+      document
+        .getElementById("charts-section")
+        .innerHTML = "";
+
+      buildCharts(
+        getFilteredChartData()
+      );
     }
 
     function buildNav(data) {
-      const topNav = document.getElementById("topNav");
-      const anchorLinks = document.getElementById("anchorLinks");
 
-      const chartLink = document.createElement("a");
-      chartLink.href = "#charts-title";
-      chartLink.textContent = "📈 Tagesmedian";
+      const topNav =
+        document.getElementById("topNav");
+
+      const anchorLinks =
+        document.getElementById("anchorLinks");
+
+      const chartLink =
+        document.createElement("a");
+
+      chartLink.href =
+        "#charts-title";
+
+      chartLink.textContent =
+        "📈 Tagesmedian";
+
       topNav.appendChild(chartLink);
 
       PAGES.forEach(page => {
-        const pageData = data.filter(item => item.page === page);
+
+        const pageData =
+          data.filter(
+            item => item.page === page
+          );
 
         if (!pageData.length) {
           return;
         }
 
-        const id = safeid(page);
+        const id =
+          safeid(page);
 
-        const navigationLink = document.createElement("a");
-        navigationLink.href = `#table-${id}`;
-        navigationLink.textContent = page;
-        topNav.appendChild(navigationLink);
+        const navigationLink =
+          document.createElement("a");
 
-        const anchorLink = document.createElement("a");
-        anchorLink.href = `#table-${id}`;
-        anchorLink.textContent = page;
-        anchorLinks.appendChild(anchorLink);
+        navigationLink.href =
+          `#table-${id}`;
+
+        navigationLink.textContent =
+          page;
+
+        topNav.appendChild(
+          navigationLink
+        );
+
+        const anchorLink =
+          document.createElement("a");
+
+        anchorLink.href =
+          `#table-${id}`;
+
+        anchorLink.textContent =
+          page;
+
+        anchorLinks.appendChild(
+          anchorLink
+        );
       });
     }
 
     function buildCharts(data) {
+
       const chartsContainer =
-        document.getElementById("charts-section");
+        document.getElementById(
+          "charts-section"
+        );
 
       PAGES.forEach(page => {
-        const pageData = data.filter(item => item.page === page);
+
+        const pageData =
+          data.filter(
+            item => item.page === page
+          );
 
         if (!pageData.length) {
           return;
         }
 
-        const medianData = getDailyMedians(pageData);
-        const pageId = safeid(page);
-        const card = document.createElement("div");
+        const medianData =
+          getDailyMedians(pageData);
 
-        card.className = "card";
+        const pageId =
+          safeid(page);
 
-card.innerHTML = `
-  <h2>${page}</h2>
+        const card =
+          document.createElement("div");
 
-  <div class="chart-container">
-    <canvas id="chart-${pageId}"></canvas>
-  </div>
+        card.className =
+          "card";
 
-  <div class="chart-container" style="margin-top:20px;">
-    <canvas id="tech-chart-${pageId}"></canvas>
-  </div>
+        card.innerHTML = `
 
-  <div class="chart-url">
-    Geprüfte URL:
-    <a href="${PAGE_URLS[page]}"
-       target="_blank"
-       rel="noopener noreferrer">
-      ${PAGE_URLS[page]}
-    </a>
-  </div>
-`;
+          <h2>${page}</h2>
 
-        chartsContainer.appendChild(card);
+          <div class="chart-container">
+            <canvas id="chart-${pageId}"></canvas>
+          </div>
 
-        const canvas = document.getElementById(`chart-${pageId}`);
+          <div
+            class="chart-container"
+            style="margin-top:20px;">
+            <canvas id="tech-chart-${pageId}"></canvas>
+          </div>
 
-        const chart = new Chart(canvas, {
-          type: "line",
+          <div class="cls-chart-container">
+            <canvas id="cls-chart-${pageId}"></canvas>
+          </div>
 
-          data: {
-            labels: medianData.map(item => item.date),
+          <div class="chart-url">
+            Geprüfte URL:
+            <a
+              href="${PAGE_URLS[page]}"
+              target="_blank"
+              rel="noopener noreferrer">
+              ${PAGE_URLS[page]}
+            </a>
+          </div>
+        `;
 
-            datasets: [
-              createMedianDataset(
-                "Performance Tagesmedian",
-                medianData.map(item => item.performance),
-                COLORS.performance
-              ),
-              createMedianDataset(
-                "Accessibility Tagesmedian",
-                medianData.map(item => item.accessibility),
-                COLORS.accessibility
-              ),
-              createMedianDataset(
-                "SEO Tagesmedian",
-                medianData.map(item => item.seo),
-                COLORS.seo
-              ),
-              createMedianDataset(
-                "Best Practices Tagesmedian",
-                medianData.map(item => item.best_practices),
-                COLORS.best_practices
-              )
-            ]
-          },
+        chartsContainer.appendChild(
+          card
+        );
 
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
+        /* ==================================
+           LIGHTHOUSE SCORES
+           ================================== */
 
-            interaction: {
-              mode: "index",
-              intersect: false
+        const canvas =
+          document.getElementById(
+            `chart-${pageId}`
+          );
+
+        const chart =
+          new Chart(canvas, {
+
+            type: "line",
+
+            data: {
+
+              labels:
+                medianData.map(
+                  item => item.date
+                ),
+
+              datasets: [
+
+                createMedianDataset(
+                  "Performance Tagesmedian",
+                  medianData.map(
+                    item => item.performance
+                  ),
+                  COLORS.performance
+                ),
+
+                createMedianDataset(
+                  "Accessibility Tagesmedian",
+                  medianData.map(
+                    item => item.accessibility
+                  ),
+                  COLORS.accessibility
+                ),
+
+                createMedianDataset(
+                  "SEO Tagesmedian",
+                  medianData.map(
+                    item => item.seo
+                  ),
+                  COLORS.seo
+                ),
+
+                createMedianDataset(
+                  "Best Practices Tagesmedian",
+                  medianData.map(
+                    item => item.best_practices
+                  ),
+                  COLORS.best_practices
+                )
+              ]
             },
 
-            plugins: {
-              legend: {
-                labels: {
-                  usePointStyle: true,
-                  boxWidth: 12
+            options: {
+
+              responsive: true,
+              maintainAspectRatio: false,
+
+              interaction: {
+                mode: "index",
+                intersect: false
+              },
+
+              plugins: {
+
+                legend: {
+                  labels: {
+                    usePointStyle: true,
+                    boxWidth: 12
+                  }
+                },
+
+                tooltip: {
+
+                  callbacks: {
+
+                    afterBody:
+                      tooltipItems => {
+
+                        if (
+                          !tooltipItems.length
+                        ) {
+                          return "";
+                        }
+
+                        const selectedDay =
+                          medianData[
+                            tooltipItems[0]
+                              .dataIndex
+                          ];
+
+                        return [
+                          `Datum: ${selectedDay.date}`,
+                          `Messungen an diesem Tag: ${selectedDay.runs}`,
+                          "Angezeigte Werte: Tagesmedian"
+                        ];
+                      }
+                  }
                 }
               },
 
-              tooltip: {
-                callbacks: {
-                  afterBody: tooltipItems => {
-                    if (!tooltipItems.length) {
-                      return "";
-                    }
+              scales: {
 
-                    const selectedDay =
-                      medianData[tooltipItems[0].dataIndex];
+                x: {
 
-                    return [
-                      `Datum: ${selectedDay.date}`,
-                      `Messungen an diesem Tag: ${selectedDay.runs}`,
-                      "Angezeigte Werte: Tagesmedian"
-                    ];
+                  ticks: {
+                    autoSkip: true,
+                    maxTicksLimit: 10,
+                    maxRotation: 45,
+                    minRotation: 45
+                  }
+                },
+
+                y: {
+
+                  min: 0,
+                  max: 100,
+
+                  ticks: {
+                    stepSize: 10
                   }
                 }
               }
-            },
+            }
+          });
 
-            scales: {
-              x: {
-                ticks: {
-                  autoSkip: true,
-                  maxTicksLimit: 10,
-                  maxRotation: 45,
-                  minRotation: 45
-                }
+        chartInstances.push(
+          chart
+        );
+
+        /* ==================================
+           PERFORMANCE METRICS
+           TTFB / FCP / LCP / TBT
+           ================================== */
+
+        const techCanvas =
+          document.getElementById(
+            `tech-chart-${pageId}`
+          );
+
+        const techChart =
+          new Chart(
+            techCanvas,
+            {
+
+              type: "line",
+
+              data: {
+
+                labels:
+                  medianData.map(
+                    item => item.date
+                  ),
+
+                datasets: [
+
+                  createMedianDataset(
+                    "TTFB (ms)",
+                    medianData.map(
+                      item => item.ttfb
+                    ),
+                    COLORS.ttfb
+                  ),
+
+                  createMedianDataset(
+                    "FCP (ms)",
+                    medianData.map(
+                      item => item.fcp
+                    ),
+                    COLORS.fcp
+                  ),
+
+                  createMedianDataset(
+                    "LCP (ms)",
+                    medianData.map(
+                      item => item.lcp
+                    ),
+                    COLORS.lcp
+                  ),
+
+                  createMedianDataset(
+                    "TBT (ms)",
+                    medianData.map(
+                      item => item.tbt
+                    ),
+                    COLORS.tbt
+                  )
+                ]
               },
 
-              y: {
-                min: 0,
-                max: 100,
-                ticks: {
-                  stepSize: 10
+              options: {
+
+                responsive: true,
+                maintainAspectRatio: false,
+
+                interaction: {
+                  mode: "index",
+                  intersect: false
+                },
+
+                plugins: {
+
+                  title: {
+                    display: true,
+                    text:
+                      "Performance Metrics – Tagesmedian"
+                  },
+
+                  legend: {
+                    labels: {
+                      usePointStyle: true,
+                      boxWidth: 12
+                    }
+                  },
+
+                  tooltip: {
+
+                    callbacks: {
+
+                      afterBody:
+                        tooltipItems => {
+
+                          if (
+                            !tooltipItems.length
+                          ) {
+                            return "";
+                          }
+
+                          const selectedDay =
+                            medianData[
+                              tooltipItems[0]
+                                .dataIndex
+                            ];
+
+                          return [
+                            `Messungen an diesem Tag: ${selectedDay.runs}`,
+                            "Angezeigte Werte: Tagesmedian"
+                          ];
+                        }
+                    }
+                  }
+                },
+
+                scales: {
+
+                  x: {
+
+                    ticks: {
+                      autoSkip: true,
+                      maxTicksLimit: 10,
+                      maxRotation: 45,
+                      minRotation: 45
+                    }
+                  },
+
+                  y: {
+
+                    beginAtZero: true,
+
+                    title: {
+                      display: true,
+                      text: "Millisekunden"
+                    }
+                  }
                 }
               }
             }
-          }
-        });
+          );
 
-        chartInstances.push(chart);
-        const techCanvas =
-  document.getElementById(`tech-chart-${pageId}`);
+        chartInstances.push(
+          techChart
+        );
 
-const techChart = new Chart(techCanvas, {
-  type: "line",
+        /* ==================================
+           CLS - EIGENES TAGESMEDIAN-DIAGRAMM
+           ================================== */
 
-  data: {
-    labels: medianData.map(item => item.date),
+        const clsCanvas =
+          document.getElementById(
+            `cls-chart-${pageId}`
+          );
 
-    datasets: [
-      createMedianDataset(
-        "TTFB (ms)",
-        medianData.map(item => item.ttfb),
-        COLORS.ttfb
-      ),
+        const clsChart =
+          new Chart(
+            clsCanvas,
+            {
 
-      createMedianDataset(
-        "FCP (ms)",
-        medianData.map(item => item.fcp),
-        COLORS.fcp
-      ),
+              type: "line",
 
-      createMedianDataset(
-        "LCP (ms)",
-        medianData.map(item => item.lcp),
-        COLORS.lcp
-      ),
+              data: {
 
-      createMedianDataset(
-        "TBT (ms)",
-        medianData.map(item => item.tbt),
-        COLORS.tbt
-      )
-    ]
-  },
+                labels:
+                  medianData.map(
+                    item => item.date
+                  ),
 
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
+                datasets: [
 
-    plugins: {
-      title: {
-        display: true,
-        text: "Core Web Vitals & Performance Metrics"
-      }
-    }
-  }
-});
+                  createMedianDataset(
+                    "CLS Tagesmedian",
+                    medianData.map(
+                      item => item.cls
+                    ),
+                    COLORS.cls
+                  )
+                ]
+              },
 
-chartInstances.push(techChart);
+              options: {
+
+                responsive: true,
+                maintainAspectRatio: false,
+
+                interaction: {
+                  mode: "index",
+                  intersect: false
+                },
+
+                plugins: {
+
+                  title: {
+                    display: true,
+                    text:
+                      "Cumulative Layout Shift (CLS) – Tagesmedian"
+                  },
+
+                  legend: {
+                    display: true,
+
+                    labels: {
+                      usePointStyle: true,
+                      boxWidth: 12
+                    }
+                  },
+
+                  tooltip: {
+
+                    callbacks: {
+
+                      label:
+                        context => {
+
+                          const value =
+                            context.parsed.y;
+
+                          if (
+                            value == null
+                          ) {
+                            return "CLS: -";
+                          }
+
+                          return (
+                            "CLS Tagesmedian: " +
+                            Number(value)
+                              .toFixed(3)
+                          );
+                        },
+
+                      afterBody:
+                        tooltipItems => {
+
+                          if (
+                            !tooltipItems.length
+                          ) {
+                            return "";
+                          }
+
+                          const selectedDay =
+                            medianData[
+                              tooltipItems[0]
+                                .dataIndex
+                            ];
+
+                          return [
+                            `Messungen an diesem Tag: ${selectedDay.runs}`
+                          ];
+                        }
+                    }
+                  }
+                },
+
+                scales: {
+
+                  x: {
+
+                    ticks: {
+                      autoSkip: true,
+                      maxTicksLimit: 10,
+                      maxRotation: 45,
+                      minRotation: 45
+                    }
+                  },
+
+                  y: {
+
+                    beginAtZero: true,
+
+                    /*
+                     * Bewusst nur vorgeschlagen, nicht fix.
+                     * Höhere CLS-Werte werden dadurch nicht abgeschnitten.
+                     */
+                    suggestedMax: 0.30,
+
+                    ticks: {
+
+                      callback:
+                        value =>
+                          Number(value)
+                            .toFixed(2)
+                    },
+
+                    title: {
+                      display: true,
+                      text: "CLS"
+                    }
+                  }
+                }
+              }
+            }
+          );
+
+        chartInstances.push(
+          clsChart
+        );
       });
     }
 
-    function createMedianDataset(label, values, color) {
+    function createMedianDataset(
+      label,
+      values,
+      color
+    ) {
+
       return {
+
         label,
         data: values,
+
         borderColor: color,
         backgroundColor: color,
+
         borderWidth: 2.5,
+
         pointRadius: 3,
         pointHoverRadius: 6,
+
         pointBackgroundColor: color,
         pointBorderColor: "#ffffff",
         pointBorderWidth: 1,
+
         tension: 0.25,
+
         fill: false
       };
     }
 
     function buildAllTables(data) {
-      const container = document.getElementById("tables");
+
+      const container =
+        document.getElementById(
+          "tables"
+        );
 
       PAGES.forEach(page => {
-        const pageData = data.filter(item => item.page === page);
+
+        const pageData =
+          data.filter(
+            item => item.page === page
+          );
 
         if (!pageData.length) {
           return;
         }
 
-        const id = safeid(page);
-        const sorted = [...pageData].sort(
-          (a, b) => String(b.date).localeCompare(String(a.date))
-        );
+        const id =
+          safeid(page);
+
+        const sorted =
+          [...pageData].sort(
+            (a, b) =>
+              String(b.date)
+                .localeCompare(
+                  String(a.date)
+                )
+          );
 
         state[id] = {
+
           sortCol: "date",
           sortDir: -1,
           currentPage: 1,
+
           filtered: sorted,
           all: pageData
         };
 
-        const wrap = document.createElement("div");
-        wrap.className = "table-wrap";
-        wrap.id = `table-${id}`;
+        const wrap =
+          document.createElement(
+            "div"
+          );
+
+        wrap.className =
+          "table-wrap";
+
+        wrap.id =
+          `table-${id}`;
 
         wrap.innerHTML = `
-          <a class="back-top" href="#top">↑ Nach oben</a>
+
+          <a
+            class="back-top"
+            href="#top">
+            ↑ Nach oben
+          </a>
 
           <h3>
             ${page}
-            <span style="font-weight: normal; color: #999; font-size: 0.85rem;">
+
+            <span
+              style="
+                font-weight: normal;
+                color: #999;
+                font-size: 0.85rem;
+              ">
               (${pageData.length} Einträge gesamt)
             </span>
           </h3>
 
           <div class="filter-bar">
+
             <label>
               Von:
-              <input type="date" id="from-${id}">
+              <input
+                type="date"
+                id="from-${id}">
             </label>
 
             <label>
               Bis:
-              <input type="date" id="to-${id}">
+              <input
+                type="date"
+                id="to-${id}">
             </label>
 
             <label>
@@ -892,277 +1373,575 @@ chartInstances.push(techChart);
               <input
                 type="text"
                 id="search-${id}"
-                placeholder="Datum suchen..."
-              >
+                placeholder="Datum suchen...">
             </label>
 
             <label>
               Zeilen:
+
               <select id="size-${id}">
-                <option value="25" selected>25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="999999">Alle</option>
+
+                <option
+                  value="25"
+                  selected>
+                  25
+                </option>
+
+                <option value="50">
+                  50
+                </option>
+
+                <option value="100">
+                  100
+                </option>
+
+                <option value="999999">
+                  Alle
+                </option>
+
               </select>
+
             </label>
+
           </div>
 
           <table>
-<thead>
-<tr>
-  <th data-page="${id}" data-col="date">Datum</th>
-  <th data-page="${id}" data-col="performance">Performance</th>
-  <th data-page="${id}" data-col="accessibility">Accessibility</th>
-  <th data-page="${id}" data-col="seo">SEO</th>
-  <th data-page="${id}" data-col="best_practices">Best Practices</th>
 
-  <th data-page="${id}" data-col="ttfb">TTFB</th>
-  <th data-page="${id}" data-col="fcp">FCP</th>
-  <th data-page="${id}" data-col="lcp">LCP</th>
-  <th data-page="${id}" data-col="tbt">TBT</th>
-  <th data-page="${id}" data-col="cls">CLS</th>
-  <th data-page="${id}" data-col="chrome_version">Chromium</th>
-  <th data-page="${id}" data-col="lighthouse_version">Lighthouse</th>
+            <thead>
 
-</tr>
-</thead>
+              <tr>
 
-            <tbody id="tbody-${id}"></tbody>
+                <th
+                  data-page="${id}"
+                  data-col="date">
+                  Datum
+                </th>
+
+                <th
+                  data-page="${id}"
+                  data-col="performance">
+                  Performance
+                </th>
+
+                <th
+                  data-page="${id}"
+                  data-col="accessibility">
+                  Accessibility
+                </th>
+
+                <th
+                  data-page="${id}"
+                  data-col="seo">
+                  SEO
+                </th>
+
+                <th
+                  data-page="${id}"
+                  data-col="best_practices">
+                  Best Practices
+                </th>
+
+                <th
+                  data-page="${id}"
+                  data-col="ttfb">
+                  TTFB
+                </th>
+
+                <th
+                  data-page="${id}"
+                  data-col="fcp">
+                  FCP
+                </th>
+
+                <th
+                  data-page="${id}"
+                  data-col="lcp">
+                  LCP
+                </th>
+
+                <th
+                  data-page="${id}"
+                  data-col="tbt">
+                  TBT
+                </th>
+
+                <th
+                  data-page="${id}"
+                  data-col="cls">
+                  CLS
+                </th>
+
+                <th
+                  data-page="${id}"
+                  data-col="chrome_version">
+                  Chromium
+                </th>
+
+                <th
+                  data-page="${id}"
+                  data-col="lighthouse_version">
+                  Lighthouse
+                </th>
+
+              </tr>
+
+            </thead>
+
+            <tbody
+              id="tbody-${id}">
+            </tbody>
+
           </table>
 
-          <div class="row-count" id="count-${id}"></div>
-          <div class="pagination" id="pag-${id}"></div>
+          <div
+            class="row-count"
+            id="count-${id}">
+          </div>
+
+          <div
+            class="pagination"
+            id="pag-${id}">
+          </div>
         `;
 
-        container.appendChild(wrap);
+        container.appendChild(
+          wrap
+        );
 
-        ["from", "to", "search", "size"].forEach(key => {
+        [
+          "from",
+          "to",
+          "search",
+          "size"
+        ].forEach(key => {
+
           document
-            .getElementById(`${key}-${id}`)
-            .addEventListener("input", () => applyFilter(id));
+            .getElementById(
+              `${key}-${id}`
+            )
+            .addEventListener(
+              "input",
+              () =>
+                applyFilter(id)
+            );
         });
 
-        wrap.querySelectorAll("th[data-col]").forEach(tableHeader => {
-          tableHeader.addEventListener("click", () => {
-            const currentState = state[id];
+        wrap
+          .querySelectorAll(
+            "th[data-col]"
+          )
+          .forEach(
+            tableHeader => {
 
-            if (currentState.sortCol === tableHeader.dataset.col) {
-              currentState.sortDir *= -1;
-            } else {
-              currentState.sortCol = tableHeader.dataset.col;
-              currentState.sortDir = -1;
+              tableHeader
+                .addEventListener(
+                  "click",
+                  () => {
+
+                    const currentState =
+                      state[id];
+
+                    if (
+                      currentState.sortCol ===
+                      tableHeader.dataset.col
+                    ) {
+
+                      currentState.sortDir *= -1;
+
+                    } else {
+
+                      currentState.sortCol =
+                        tableHeader.dataset.col;
+
+                      currentState.sortDir =
+                        -1;
+                    }
+
+                    sortAndRender(id);
+                  }
+                );
             }
-
-            sortAndRender(id);
-          });
-        });
+          );
 
         renderTable(id);
       });
     }
 
     function applyFilter(id) {
-      const from = document.getElementById(`from-${id}`).value;
-      const to = document.getElementById(`to-${id}`).value;
-      const search = document
-        .getElementById(`search-${id}`)
-        .value
-        .toLowerCase();
 
-      const currentState = state[id];
+      const from =
+        document
+          .getElementById(
+            `from-${id}`
+          )
+          .value;
 
-      currentState.filtered = currentState.all.filter(item => {
-        const dateString = String(item.date).slice(0, 10);
+      const to =
+        document
+          .getElementById(
+            `to-${id}`
+          )
+          .value;
 
-        if (from && dateString < from) {
-          return false;
-        }
+      const search =
+        document
+          .getElementById(
+            `search-${id}`
+          )
+          .value
+          .toLowerCase();
 
-        if (to && dateString > to) {
-          return false;
-        }
+      const currentState =
+        state[id];
 
-        if (
-          search &&
-          !String(item.date).toLowerCase().includes(search)
-        ) {
-          return false;
-        }
+      currentState.filtered =
+        currentState.all.filter(
+          item => {
 
-        return true;
-      });
+            const dateString =
+              String(item.date)
+                .slice(0, 10);
 
-      currentState.currentPage = 1;
+            if (
+              from &&
+              dateString < from
+            ) {
+              return false;
+            }
+
+            if (
+              to &&
+              dateString > to
+            ) {
+              return false;
+            }
+
+            if (
+              search &&
+              !String(item.date)
+                .toLowerCase()
+                .includes(search)
+            ) {
+              return false;
+            }
+
+            return true;
+          }
+        );
+
+      currentState.currentPage =
+        1;
+
       sortAndRender(id);
     }
 
     function sortAndRender(id) {
-      const currentState = state[id];
 
-      currentState.filtered.sort((a, b) => {
-        const firstValue = a[currentState.sortCol];
-        const secondValue = b[currentState.sortCol];
+      const currentState =
+        state[id];
 
-        if (
-          typeof firstValue === "number" &&
-          typeof secondValue === "number"
-        ) {
-          return currentState.sortDir * (firstValue - secondValue);
+      currentState.filtered.sort(
+        (a, b) => {
+
+          const firstValue =
+            a[currentState.sortCol];
+
+          const secondValue =
+            b[currentState.sortCol];
+
+          if (
+            typeof firstValue === "number" &&
+            typeof secondValue === "number"
+          ) {
+
+            return (
+              currentState.sortDir *
+              (
+                firstValue -
+                secondValue
+              )
+            );
+          }
+
+          return (
+            currentState.sortDir *
+            String(
+              firstValue ?? ""
+            ).localeCompare(
+              String(
+                secondValue ?? ""
+              )
+            )
+          );
         }
-
-        return (
-          currentState.sortDir *
-          String(firstValue ?? "").localeCompare(
-            String(secondValue ?? "")
-          )
-        );
-      });
+      );
 
       renderTable(id);
     }
 
     function renderTable(id) {
-      const currentState = state[id];
-      const pageSize = parseInt(
-        document.getElementById(`size-${id}`).value,
-        10
-      );
 
-      const total = currentState.filtered.length;
-      const totalPages = Math.ceil(total / pageSize) || 1;
+      const currentState =
+        state[id];
 
-      currentState.currentPage = Math.min(
-        currentState.currentPage,
-        totalPages
-      );
+      const pageSize =
+        parseInt(
+
+          document
+            .getElementById(
+              `size-${id}`
+            )
+            .value,
+
+          10
+        );
+
+      const total =
+        currentState.filtered.length;
+
+      const totalPages =
+        Math.ceil(
+          total / pageSize
+        ) || 1;
+
+      currentState.currentPage =
+        Math.min(
+          currentState.currentPage,
+          totalPages
+        );
 
       const startIndex =
-        (currentState.currentPage - 1) * pageSize;
+        (
+          currentState.currentPage -
+          1
+        ) * pageSize;
 
-      const currentRows = currentState.filtered.slice(
-        startIndex,
-        startIndex + pageSize
+      const currentRows =
+        currentState.filtered.slice(
+
+          startIndex,
+
+          startIndex + pageSize
+        );
+
+      const tableBody =
+        document.getElementById(
+          `tbody-${id}`
+        );
+
+      tableBody.innerHTML =
+        "";
+
+      currentRows.forEach(
+        item => {
+
+          const row =
+            document.createElement(
+              "tr"
+            );
+
+          row.innerHTML = `
+
+            <td>
+              ${item.date}
+            </td>
+
+            <td>
+              <span
+                class="score ${scoreClass(Number(item.performance))}">
+                ${item.performance}
+              </span>
+            </td>
+
+            <td>
+              <span
+                class="score ${scoreClass(Number(item.accessibility))}">
+                ${item.accessibility}
+              </span>
+            </td>
+
+            <td>
+              <span
+                class="score ${scoreClass(Number(item.seo))}">
+                ${item.seo}
+              </span>
+            </td>
+
+            <td>
+              <span
+                class="score ${scoreClass(Number(item.best_practices))}">
+                ${item.best_practices}
+              </span>
+            </td>
+
+            <td>
+              ${
+                item.ttfb
+                  ? Math.round(item.ttfb) +
+                    " ms"
+                  : "-"
+              }
+            </td>
+
+            <td>
+              ${
+                item.fcp
+                  ? (item.fcp / 1000)
+                      .toFixed(2) +
+                    " s"
+                  : "-"
+              }
+            </td>
+
+            <td>
+              ${
+                item.lcp
+                  ? (item.lcp / 1000)
+                      .toFixed(2) +
+                    " s"
+                  : "-"
+              }
+            </td>
+
+            <td>
+              ${
+                item.tbt
+                  ? Math.round(item.tbt) +
+                    " ms"
+                  : "-"
+              }
+            </td>
+
+            <td>
+              ${
+                item.cls != null
+                  ? Number(item.cls)
+                      .toFixed(3)
+                  : "-"
+              }
+            </td>
+
+            <td>
+              ${
+                item.chrome_version
+                  ? item.chrome_version
+                      .replace(
+                        "Chromium ",
+                        ""
+                      )
+                      .replace(
+                        "Google Chrome ",
+                        ""
+                      )
+                  : "-"
+              }
+            </td>
+
+            <td>
+              ${
+                item.lighthouse_version ||
+                "-"
+              }
+            </td>
+          `;
+
+          tableBody.appendChild(
+            row
+          );
+        }
       );
 
-      const tableBody = document.getElementById(`tbody-${id}`);
-      tableBody.innerHTML = "";
-
-      currentRows.forEach(item => {
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-          <td>${item.date}</td>
-          <td>
-            <span class="score ${scoreClass(Number(item.performance))}">
-              ${item.performance}
-            </span>
-          </td>
-          <td>
-            <span class="score ${scoreClass(Number(item.accessibility))}">
-              ${item.accessibility}
-            </span>
-          </td>
-          <td>
-            <span class="score ${scoreClass(Number(item.seo))}">
-              ${item.seo}
-            </span>
-          </td>
-          <td>
-            <span class="score ${scoreClass(Number(item.best_practices))}">
-              ${item.best_practices}
-            </span>
-          </td>
-<td>
-  ${item.ttfb
-    ? Math.round(item.ttfb) + " ms"
-    : "-"}
-</td>
-
-<td>
-  ${item.fcp
-    ? (item.fcp / 1000).toFixed(2) + " s"
-    : "-"}
-</td>
-
-<td>
-  ${item.lcp
-    ? (item.lcp / 1000).toFixed(2) + " s"
-    : "-"}
-</td>
-
-<td>
-  ${item.tbt
-    ? Math.round(item.tbt) + " ms"
-    : "-"}
-</td>
-
-<td>
-  ${item.cls != null
-    ? Number(item.cls).toFixed(3)
-    : "-"}
-</td>
-
-<td>
-  ${item.chrome_version
-  ? item.chrome_version
-      .replace("Chromium ", "")
-      .replace("Google Chrome ", "")
-  : "-"}
-</td>
-
-<td>
-  ${item.lighthouse_version || "-"}
-</td>
-        `;
-
-        tableBody.appendChild(row);
-      });
-
-      document.getElementById(`count-${id}`).textContent =
+      document
+        .getElementById(
+          `count-${id}`
+        )
+        .textContent =
         `${total} Einträge · Seite ${currentState.currentPage} von ${totalPages}`;
 
-      const pagination = document.getElementById(`pag-${id}`);
-      pagination.innerHTML = "";
+      const pagination =
+        document.getElementById(
+          `pag-${id}`
+        );
+
+      pagination.innerHTML =
+        "";
 
       for (
         let pageNumber = 1;
         pageNumber <= totalPages;
         pageNumber++
       ) {
-        const button = document.createElement("button");
-        button.textContent = pageNumber;
 
-        if (pageNumber === currentState.currentPage) {
-          button.classList.add("active");
+        const button =
+          document.createElement(
+            "button"
+          );
+
+        button.textContent =
+          pageNumber;
+
+        if (
+          pageNumber ===
+          currentState.currentPage
+        ) {
+
+          button.classList.add(
+            "active"
+          );
         }
 
-        button.addEventListener("click", () => {
-          currentState.currentPage = pageNumber;
-          renderTable(id);
-        });
+        button.addEventListener(
+          "click",
+          () => {
 
-        pagination.appendChild(button);
+            currentState.currentPage =
+              pageNumber;
+
+            renderTable(id);
+          }
+        );
+
+        pagination.appendChild(
+          button
+        );
       }
 
       document
-        .querySelectorAll(`th[data-page="${id}"]`)
-        .forEach(tableHeader => {
-          tableHeader.classList.remove("sorted-asc", "sorted-desc");
+        .querySelectorAll(
+          `th[data-page="${id}"]`
+        )
+        .forEach(
+          tableHeader => {
 
-          if (tableHeader.dataset.col === currentState.sortCol) {
-            tableHeader.classList.add(
-              currentState.sortDir === 1
-                ? "sorted-asc"
-                : "sorted-desc"
+            tableHeader.classList.remove(
+              "sorted-asc",
+              "sorted-desc"
             );
+
+            if (
+              tableHeader.dataset.col ===
+              currentState.sortCol
+            ) {
+
+              tableHeader.classList.add(
+
+                currentState.sortDir === 1
+                  ? "sorted-asc"
+                  : "sorted-desc"
+              );
+            }
           }
-        });
+        );
     }
 
     fetch("results.json")
+
       .then(response => {
+
         if (!response.ok) {
+
           throw new Error(
+
             "results.json konnte nicht geladen werden. " +
             `HTTP-Status: ${response.status}`
           );
@@ -1170,47 +1949,107 @@ chartInstances.push(techChart);
 
         return response.json();
       })
+
       .then(data => {
+
         if (!Array.isArray(data)) {
+
           throw new Error(
             "results.json enthält kein gültiges JSON-Array."
           );
         }
 
         allData = data;
+
         buildNav(data);
 
-        const savedRange = localStorage.getItem("chartRange");
-        const allowedRanges = ["7", "30", "90", "180", "all"];
+        const savedRange =
+          localStorage.getItem(
+            "chartRange"
+          );
 
-        if (savedRange && allowedRanges.includes(savedRange)) {
-          document.getElementById("chartRange").value = savedRange;
+        const allowedRanges = [
+          "7",
+          "30",
+          "90",
+          "180",
+          "all"
+        ];
+
+        if (
+          savedRange &&
+          allowedRanges.includes(
+            savedRange
+          )
+        ) {
+
+          document
+            .getElementById(
+              "chartRange"
+            )
+            .value =
+            savedRange;
         }
 
-        buildCharts(getFilteredChartData());
+        buildCharts(
+          getFilteredChartData()
+        );
 
         document
-          .getElementById("chartRange")
-          .addEventListener("change", event => {
-            localStorage.setItem("chartRange", event.target.value);
-            updateCharts();
-          });
+          .getElementById(
+            "chartRange"
+          )
+          .addEventListener(
+            "change",
+            event => {
+
+              localStorage.setItem(
+                "chartRange",
+                event.target.value
+              );
+
+              updateCharts();
+            }
+          );
 
         buildAllTables(data);
       })
+
       .catch(error => {
+
         console.error(error);
 
-        const errorBox = document.createElement("div");
-        errorBox.className = "error-box";
+        const errorBox =
+          document.createElement(
+            "div"
+          );
+
+        errorBox.className =
+          "error-box";
+
         errorBox.innerHTML = `
-          <strong>Fehler beim Laden der Ergebnisse</strong>
-          <p>${error.message}</p>
+
+          <strong>
+            Fehler beim Laden der Ergebnisse
+          </strong>
+
+          <p>
+            ${error.message}
+          </p>
         `;
 
-        const chartsTitle = document.getElementById("charts-title");
-        chartsTitle.insertAdjacentElement("afterend", errorBox);
+        const chartsTitle =
+          document.getElementById(
+            "charts-title"
+          );
+
+        chartsTitle.insertAdjacentElement(
+          "afterend",
+          errorBox
+        );
       });
+
   </script>
+
 </body>
 </html>
